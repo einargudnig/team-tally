@@ -9,31 +9,31 @@ import Colors from '@/constants/Colors';
 
 export default function EditScreenInfo({ path }: { path: string }) {
   return (
-    <View>
-      <View style={styles.getStartedContainer}>
+    <View lightColor={Colors.light.bg} darkColor={Colors.dark.bg}>
+      <View style={styles.getStartedContainer} lightColor={Colors.light.bg} darkColor={Colors.dark.bg}>
         <Text
           style={styles.getStartedText}
-          lightColor="rgba(0,0,0,0.8)"
-          darkColor="rgba(255,255,255,0.8)">
+          lightColor={Colors.light.tx}
+          darkColor={Colors.dark.tx}>
           Open up the code for this screen:
         </Text>
 
         <View
           style={[styles.codeHighlightContainer, styles.homeScreenFilename]}
-          darkColor="rgba(255,255,255,0.05)"
-          lightColor="rgba(0,0,0,0.05)">
+          darkColor={Colors.dark.tx}
+          lightColor={Colors.light.tx}>
           <MonoText>{path}</MonoText>
         </View>
 
         <Text
           style={styles.getStartedText}
-          lightColor="rgba(0,0,0,0.8)"
-          darkColor="rgba(255,255,255,0.8)">
+          lightColor={Colors.light.tx}
+          darkColor={Colors.dark.tx}>
           Change any of the text, save the file, and your app will automatically update.
         </Text>
       </View>
 
-      <View style={styles.helpContainer}>
+      <View style={styles.helpContainer} lightColor={Colors.light.bg} darkColor={Colors.dark.bg}>
         <ExternalLink
           style={styles.helpLink}
           href="https://docs.expo.io/get-started/create-a-new-app/#opening-the-app-on-your-phonetablet">

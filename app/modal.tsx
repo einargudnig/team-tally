@@ -3,10 +3,11 @@ import { Platform, StyleSheet } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
+import Colors from '@/constants/Colors';
 
 export default function ModalScreen() {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} lightColor={Colors.light.bg} darkColor={Colors.dark.bg}>
       <Text style={styles.title}>Modal Edited</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <EditScreenInfo path="app/modal.tsx" />

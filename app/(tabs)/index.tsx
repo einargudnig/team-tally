@@ -2,12 +2,13 @@ import { StyleSheet } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
+import Colors from '@/constants/Colors';
 
 export default function TabOneScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One Edited</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+    <View style={styles.container} lightColor={Colors.light.bg} darkColor={Colors.dark.bg}>
+      <Text style={styles.title} lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>Tab One Edited</Text>
+      <View style={styles.separator} lightColor={Colors.light.ui2} darkColor={Colors.dark.ui2} />
       <EditScreenInfo path="app/(tabs)/index.tsx" />
     </View>
   );
