@@ -60,6 +60,13 @@ export default function TabLayout() {
           tabBarIcon: () => <TabBarIcon name="code" lightColor={Colors.light.cyan} darkColor={Colors.dark.cyan} />,
         }}
       />
+      <Tabs.Screen
+        name="three"
+        options={{
+          title: 'Settings',
+          tabBarIcon: () => <TabBarIcon name="code" lightColor={Colors.light.cyan} darkColor={Colors.dark.cyan} />,
+        }}
+      />
       </Tabs>
   );
 }
