@@ -36,7 +36,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Add fines',
-          tabBarIcon: () => <TabBarIcon name="code" lightColor={Colors.light.cyan} darkColor={Colors.dark.cyan} />,
+          tabBarIcon: () => <TabBarIcon name="home" lightColor={Colors.light.cyan} darkColor={Colors.dark.cyan} />,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -57,7 +57,14 @@ export default function TabLayout() {
         name="two"
         options={{
           title: 'Overview',
-          tabBarIcon: () => <TabBarIcon name="code" lightColor={Colors.light.cyan} darkColor={Colors.dark.cyan} />,
+          tabBarIcon: () => <TabBarIcon name="table" lightColor={Colors.light.cyan} darkColor={Colors.dark.cyan} />,
+        }}
+      />
+      <Tabs.Screen
+        name="three"
+        options={{
+          title: 'Settings',
+          tabBarIcon: () => <TabBarIcon name="gear" lightColor={Colors.light.cyan} darkColor={Colors.dark.cyan} />,
         }}
       />
       </Tabs>
