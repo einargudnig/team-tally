@@ -3,7 +3,7 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
-import { SafeAreaView as DefaultSafeAreaView, Text as DefaultText, View as DefaultView } from 'react-native';
+import { Button as DefaultButton, SafeAreaView as DefaultSafeAreaView, Text as DefaultText, TextInput as DefaultTextInput, View as DefaultView } from 'react-native';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from './useColorScheme';
@@ -16,6 +16,8 @@ type ThemeProps = {
 export type TextProps = ThemeProps & DefaultText['props'];
 export type ViewProps = ThemeProps & DefaultView['props'];
 export type SafeAreaViewProps = ThemeProps & DefaultSafeAreaView['props'];
+export type ButtonProps = ThemeProps & DefaultButton['props'];
+export type TextInputProps = ThemeProps & DefaultTextInput['props'];
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -50,4 +52,19 @@ export function SafeAreaView(props: SafeAreaViewProps) {
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
 
   return <DefaultSafeAreaView style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+export function Button(props: ButtonProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+
+  return <DefaultButton style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+export function TextInput(props: TextInputProps) {
+  const { style, lightBorderColor, darkBorderColor, lightColor, darkColor, ...otherProps } = props;
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'bg');
+  const borderColor = useThemeColor({ light: lightBorderColor, dark: darkBorderColor }, 'ui');
+
+  return <DefaultTextInput style={[{ backgroundColor, borderColor }, style]} {...otherProps} />;
 }
