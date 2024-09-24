@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
 
-import { Button, TextInput, View } from '@/components/Themed';
+import { Button, Text, TextInput, View } from '@/components/Themed';
 import Colors from '@/constants/Colors';
 import { useSignUp } from '@clerk/clerk-expo';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import * as React from 'react';
 
 export default function SignUpScreen() {
@@ -21,6 +21,7 @@ export default function SignUpScreen() {
     }
 
     try {
+      console.log({ emailAddress, password })
       await signUp.create({
         emailAddress,
         password,
@@ -80,6 +81,13 @@ export default function SignUpScreen() {
             onChangeText={(password) => setPassword(password)}
           />
           <Button lightColor={Colors.light.bg} darkColor={Colors.dark.bg} title="Sign Up" onPress={onSignUpPress} />
+
+          <View>
+        <Text>Don't have an account?</Text>
+        <Link href="/sign-in">
+          <Text>Sign in</Text>
+        </Link>
+      </View>
         </View>
       )}
       {pendingVerification && (

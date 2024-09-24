@@ -1,7 +1,10 @@
-import { useSignIn } from '@clerk/clerk-expo'
-import { Link, useRouter } from 'expo-router'
-import React from 'react'
-import { Button, Text, TextInput, View } from 'react-native'
+import { StyleSheet } from 'react-native';
+
+import { Button, Text, TextInput, View } from '@/components/Themed';
+import Colors from '@/constants/Colors';
+import { useSignIn } from '@clerk/clerk-expo';
+import { Link, useRouter } from 'expo-router';
+import React from 'react';
 
 export default function Page() {
   const { signIn, setActive, isLoaded } = useSignIn()
@@ -16,6 +19,7 @@ export default function Page() {
     }
 
     try {
+      console.log({ emailAddress, password })
       const signInAttempt = await signIn.create({
         identifier: emailAddress,
         password,
@@ -35,7 +39,7 @@ export default function Page() {
   }, [isLoaded, emailAddress, password])
 
   return (
-    <View>
+    <View style={styles.container} lightColor={Colors.light.bg} darkColor={Colors.dark.bg}>
       <TextInput
         autoCapitalize="none"
         value={emailAddress}
@@ -58,3 +62,24 @@ export default function Page() {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  input: {
+    // borderColor: useThemeColor({ light: Colors.light.ui3, dark: Colors.dark.ui3 }, 'ui3'),
+    borderColor: Colors.light.ui3,
+    borderWidth: 1,
+    borderRadius: 5,
+    width: '100%',
+    padding: 10,
+  },
+  separator: {
+    marginVertical: 30,
+    height: 1,
+    width: '80%',
+  }
+});
