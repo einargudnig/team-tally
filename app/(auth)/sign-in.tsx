@@ -40,6 +40,7 @@ export default function Page() {
 
   return (
     <View style={styles.container} lightColor={Colors.light.bg} darkColor={Colors.dark.bg}>
+      <View>
       <TextInput
         style={styles.input}
         autoCapitalize="none"
@@ -64,7 +65,8 @@ export default function Page() {
         <Link href="/sign-up">
           <Text>Sign up</Text>
         </Link>
-      </View>
+        </View>
+        </View>
     </View>
   )
 }

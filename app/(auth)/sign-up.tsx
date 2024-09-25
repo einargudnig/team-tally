@@ -65,16 +65,18 @@ export default function SignUpScreen() {
       {!pendingVerification && (
         <View>
           <TextInput
-            lightColor={Colors.light.bg} darkColor={Colors.dark.bg}
             style={styles.input}
+            lightColor={Colors.light.tx}
+            darkColor={Colors.dark.tx}
             autoCapitalize="none"
             value={emailAddress}
             placeholder="Email..."
             onChangeText={(email) => setEmailAddress(email)}
           />
           <TextInput
-            lightColor={Colors.light.bg} darkColor={Colors.dark.bg}
             style={styles.input}
+            lightColor={Colors.light.bg}
+            darkColor={Colors.dark.bg}
             value={password}
             placeholder="Password..."
             secureTextEntry={true}
@@ -92,7 +94,7 @@ export default function SignUpScreen() {
       )}
       {pendingVerification && (
         <>
-          <TextInput lightColor={Colors.light.bg} darkColor={Colors.dark.bg} value={code} placeholder="Code..." onChangeText={(code) => setCode(code)} />
+          <TextInput style={styles.input} lightColor={Colors.light.bg} darkColor={Colors.dark.bg} value={code} placeholder="Code..." onChangeText={(code) => setCode(code)} />
           <Button lightColor={Colors.light.ui3} darkColor={Colors.dark.ui3} title="Verify Email" onPress={onPressVerify} />
         </>
       )}
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   input: {
-    // borderColor: useThemeColor({ light: Colors.light.ui3, dark: Colors.dark.ui3 }, 'ui3'),
+    margin: 10,
     borderColor: Colors.light.ui3,
     borderWidth: 1,
     borderRadius: 5,
