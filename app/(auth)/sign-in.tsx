@@ -66,7 +66,7 @@ export default function Page() {
           <Text>Sign up</Text>
         </Link>
         </View>
-        </View>
+      </View>
     </View>
   )
 }

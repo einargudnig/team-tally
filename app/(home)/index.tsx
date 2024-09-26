@@ -21,7 +21,7 @@ export default function Page() {
             <Text style={styles.title} lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>Sign Up</Text>
           </Link>
           <Text style={styles.text}>If you do not have an account you need to create one!</Text>
-        </View>
+        </View> 
       </SignedOut>
     </View>
   )
