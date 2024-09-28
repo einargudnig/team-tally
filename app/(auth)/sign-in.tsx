@@ -6,10 +6,10 @@ import { useSignIn } from '@clerk/clerk-expo';
 import { Link, useRouter } from 'expo-router';
 import React from 'react';
 
+
 export default function Page() {
   const { signIn, setActive, isLoaded } = useSignIn()
   const router = useRouter()
-
   const [emailAddress, setEmailAddress] = React.useState('')
   const [password, setPassword] = React.useState('')
 
@@ -20,6 +20,7 @@ export default function Page() {
 
     try {
       console.log({ emailAddress, password })
+      
       const signInAttempt = await signIn.create({
         identifier: emailAddress,
         password,
@@ -34,7 +35,7 @@ export default function Page() {
         console.error(JSON.stringify(signInAttempt, null, 2))
       }
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2))
+      console.error('Error from sign in', JSON.stringify(err, null, 2))
     }
   }, [isLoaded, emailAddress, password])
 
@@ -63,7 +64,7 @@ export default function Page() {
       <View>
         <Text>Don't have an account?</Text>
         <Link href="/sign-up">
-          <Text>Sign up</Text>
+          <Text>Sign up</Text>         
         </Link>
         </View>
       </View>

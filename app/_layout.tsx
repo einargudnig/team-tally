@@ -54,6 +54,7 @@ function RootLayoutNav() {
     async getToken(key: string) {
       try {
         const item = await SecureStore.getItemAsync(key)
+        console.log({ item })
         if (item) {
           console.log(`${key} was used 🔐 \n`)
         } else {
@@ -67,6 +68,7 @@ function RootLayoutNav() {
       }
     },
     async saveToken(key: string, value: string) {
+      console.log({ key, value })
       try {
         return SecureStore.setItemAsync(key, value)
       } catch (err) {
@@ -76,7 +78,7 @@ function RootLayoutNav() {
   }
 
   const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
-
+  
   if (!publishableKey) {
     throw new Error('Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env');
   }
