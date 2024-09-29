@@ -1,17 +1,19 @@
 import { Text, View } from '@/components/Themed';
 import Colors from '@/constants/Colors';
-import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo';
-import { Link } from 'expo-router';
+import { SignedOut, useAuth } from '@clerk/clerk-expo';
+import { Link, Redirect } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 export default function Page() {
-  const { user } = useUser();
+  const { isSignedIn } = useAuth()
+  console.log('Here I end after I reload tha emulator and logged in? ,')
+  if (isSignedIn) {
+    // return <Redirect href={} />
+    console.log('redirect!')
+  }
 
   return (
     <View style={styles.container} lightColor={Colors.light.bg} darkColor={Colors.dark.bg}>
-      <SignedIn>
-        <Text style={styles.title} lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>Hello {user?.emailAddresses[0].emailAddress}</Text>
-      </SignedIn>
       <SignedOut>
           <Link href="/(auth)/sign-in">
             <Text style={styles.title} lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>Sign In</Text>
