@@ -1,19 +1,26 @@
 import { Text, View } from '@/components/Themed';
 import Colors from '@/constants/Colors';
-import { SignedOut, useAuth } from '@clerk/clerk-expo';
-import { Link, Redirect } from 'expo-router';
+import { SignedOut,  SignedIn, useAuth } from '@clerk/clerk-expo';
+import { Stack, Link, Redirect } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 export default function Page() {
   const { isSignedIn } = useAuth()
   console.log('Here I end after I reload tha emulator and logged in? ,')
   if (isSignedIn) {
-    // return <Redirect href={} />
-    console.log('redirect!')
+    // redirect to the first tab, we want that to be "home tab"
+    return <Redirect href={'/one'} />
   }
 
   return (
     <View style={styles.container} lightColor={Colors.light.bg} darkColor={Colors.dark.bg}>
+
+      <SignedIn>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          {/*<Stack.Screen name="modal" options={{ presentation: "modal" }} /> */}
+        </Stack>
+      </SignedIn>
       <SignedOut>
           <Link href="/(auth)/sign-in">
             <Text style={styles.title} lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>Sign In</Text>

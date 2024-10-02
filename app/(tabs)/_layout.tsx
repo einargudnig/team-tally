@@ -33,7 +33,7 @@ export default function TabLayout() {
         
       }}>
       <Tabs.Screen
-        name="index"
+        name="one"
         options={{
           title: 'Add fines',
           tabBarIcon: () => <TabBarIcon name="home" lightColor={Colors.light.cyan} darkColor={Colors.dark.cyan} />,
