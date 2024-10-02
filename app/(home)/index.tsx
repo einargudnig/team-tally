@@ -1,4 +1,4 @@
-import { Text, View } from '@/components/Themed';
+import { Text, View, Button } from '@/components/Themed';
 import Colors from '@/constants/Colors';
 import { SignedOut,  SignedIn, useAuth } from '@clerk/clerk-expo';
 import { Stack, Link, Redirect } from 'expo-router';
@@ -25,6 +25,7 @@ export default function Page() {
           <Link href="/(auth)/sign-in">
             <Text style={styles.title} lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>Sign In</Text>
           </Link>
+        <Button title="Sign In"/>
         <View style={styles.smallContainer}>
           <Link href="/(auth)/sign-up" style={styles.link}>
             <Text style={styles.title} lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>Sign Up</Text>
