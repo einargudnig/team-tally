@@ -59,7 +59,7 @@ export function Button(props: any) {
   const borderColor = useThemeColor({ light: lightBorder, dark: darkBorder }, 'ui3')
 
   return (
-  <Pressable style={[{ backgroundColor }, style]} onPress={onPress}>
+  <Pressable style={[{ backgroundColor, borderColor }, style]} onPress={onPress}>
     <Text>{title}</Text>
   </Pressable>
   )
