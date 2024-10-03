@@ -54,8 +54,9 @@ export function SafeAreaView(props: SafeAreaViewProps) {
 }
 
 export function Button(props: any) {
-  const { style, lightColor, darkColor, onPress, title } = props;
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+  const { style, lightBorder, darkBorder, lightColor, darkColor, onPress, title } = props;
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'bg');
+  const borderColor = useThemeColor({ light: lightBorder, dark: darkBorder }, 'ui3')
 
   return (
   <Pressable style={[{ backgroundColor }, style]} onPress={onPress}>

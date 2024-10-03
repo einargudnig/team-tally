@@ -25,7 +25,7 @@ export default function Page() {
           <Link href="/(auth)/sign-in">
             <Text style={styles.title} lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>Sign In</Text>
           </Link>
-        <Button title="Sign In"/>
+        <Button title="Sign In" lightBorder={Colors.light.ui2}/>
         <View style={styles.smallContainer}>
           <Link href="/(auth)/sign-up" style={styles.link}>
             <Text style={styles.title} lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>Sign Up</Text>
@@ -57,12 +57,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   link: {
-    padding: 10,
-    
+    padding: 10, 
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  button: {
+    padding: 10,
+    borderWidth: 10,
+    borderRadius: 10,
   },
 });
