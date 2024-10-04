@@ -2,7 +2,8 @@ import { Text, View, ButtonView } from "@/components/Themed";
 import Colors from "@/constants/Colors";
 import { SignedOut, SignedIn, useAuth } from "@clerk/clerk-expo";
 import { Stack, Link, Redirect } from "expo-router";
-import { StyleSheet } from "react-native";
+import { styles } from ".";
+
 
 export default function Page() {
   const { isSignedIn } = useAuth();
@@ -21,7 +22,7 @@ export default function Page() {
       <SignedIn>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+          {/*<Stack.Screen name="modal" options={{ presentation: "modal" }} /> */}
         </Stack>
       </SignedIn>
       <SignedOut>
@@ -65,37 +66,3 @@ export default function Page() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  smallContainer: {
-    marginTop: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  text: {
-    marginTop: 20,
-  },
-  link: {
-    padding: 10,
-  },
-  button: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
-    borderWidth: 2,
-    borderRadius: 10,
-    fontSize: 30,
-    marginBottom: 20,
-    width: 120,
-  },
-});
