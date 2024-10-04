@@ -38,11 +38,33 @@ export function useThemeColor(
   }
 }
 
-export function Input(props: TextInputProps) {}
+export function Input(props: TextInputProps) {
+  const {
+    style,
+    lightColor,
+    darkColor,
+    lightBorder,
+    darkBorder,
+    ...otherProps
+  } = props;
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, "ui3");
+  const borderColor = useThemeColor(
+    { light: lightBorder, dark: darkBorder },
+    "ui3",
+  );
+
+  return (
+    <DefaultTextInput
+      placeholderTextColor={color}
+      style={[{ color, borderColor }, style]}
+      {...otherProps}
+    />
+  );
+}
 
 export function Text(props: TextProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, "tx");
 
   return <DefaultText style={[{ color }, style]} {...otherProps} />;
 }
