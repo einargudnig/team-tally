@@ -31,6 +31,12 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "76fb9830-4041-43f7-9ad7-71de433aa9aa"
+      }
+    },
+    "owner": "einargudni"
   }
 }
