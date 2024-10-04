@@ -66,11 +66,11 @@ export default function Page() {
           secureTextEntry={true}
           onChangeText={(password) => setPassword(password)}
         />
-        <Button title="Sign In" onPress={onSignInPress} />
+        <Button title="Sign In" style={styles.button} onPress={onSignInPress} />
         <View style={styles.smallContainer}>
           <Text>Don't have an account?</Text>
           <ButtonView
-            style={styles.button}
+            style={styles.fakeButton}
             lightBorder={Colors.light.ui3}
             darkBorder={Colors.dark.ui3}
           >
@@ -100,20 +100,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   input: {
-    margin: 12,
+    marginTop: 6,
+    marginBottom: 6,
     borderWidth: 1,
     borderRadius: 5,
     width: 250,
     padding: 10,
   },
-  button: {
+  fakeButton: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: 10,
+    padding: 8,
     borderWidth: 2,
     borderRadius: 10,
-    fontSize: 30,
+    fontSize: 20,
     marginTop: 20,
     width: 120,
   },
@@ -124,4 +125,18 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 50,
   },
+  button: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    borderWidth: 2,
+    borderRadius: 10,
+    fontSize: 30,
+    fontWeight: "bold",
+    marginBottom: 10,
+    marginTop: 10,
+    width: 250
+  },
+  
 });

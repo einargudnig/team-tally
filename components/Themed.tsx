@@ -117,7 +117,7 @@ export function Button(props: any) {
   } = props;
   const backgroundColor = useThemeColor(
     { light: lightColor, dark: darkColor },
-    "bg",
+    "ui",
   );
   const borderColor = useThemeColor(
     { light: lightBorder, dark: darkBorder },
