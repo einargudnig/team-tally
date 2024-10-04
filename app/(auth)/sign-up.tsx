@@ -90,15 +90,18 @@ export default function SignUpScreen() {
             onChangeText={(password) => setPassword(password)}
           />
           <Button
-            lightColor={Colors.light.bg}
-            darkColor={Colors.dark.bg}
+            lightColor={Colors.light.ui}
+            darkColor={Colors.dark.ui}
+            lightBorder={Colors.light.ui3}
+            darkBorder={Colors.dark.ui3}
+            style={styles.button}
             title="Sign Up"
             onPress={onSignUpPress}
           />
 
           <View style={styles.smallContainer}>
             <Text>Already have an account?</Text>
-            <ButtonView style={styles.button}>
+            <ButtonView style={styles.fakeButton}>
               <Link href="/sign-in">
                 <Text
                   style={styles.title}
@@ -125,8 +128,11 @@ export default function SignUpScreen() {
             onChangeText={(code) => setCode(code)}
           />
           <Button
-            lightColor={Colors.light.ui3}
-            darkColor={Colors.dark.ui3}
+            style={styles.button}
+            lightColor={Colors.light.ui}
+            darkColor={Colors.dark.ui}
+            lightBorder={Colors.light.ui3}
+            darkBorder={Colors.dark.ui3}
             title="Verify Email"
             onPress={onPressVerify}
           />
@@ -146,11 +152,30 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   input: {
-    margin: 12,
+    marginTop: 6,
+    marginBottom: 6,
     borderWidth: 1,
     borderRadius: 5,
     width: 250,
     padding: 10,
+  },
+  fakeButton: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 8,
+    borderWidth: 2,
+    borderRadius: 10,
+    fontSize: 20,
+    marginTop: 20,
+    width: 120,
+  },
+  smallContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    marginTop: 50,
   },
   button: {
     display: "flex",
@@ -160,13 +185,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 10,
     fontSize: 30,
-    marginTop: 20,
-    width: 120,
-  },
-  smallContainer: {
-    marginTop: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
+    fontWeight: "bold",
+    marginBottom: 10,
+    marginTop: 10,
+    width: 250,
   },
 });

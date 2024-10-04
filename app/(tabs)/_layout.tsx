@@ -10,10 +10,9 @@ import Colors from '@/constants/Colors';
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
-  lightColor: string;
-  darkColor: string;
 }) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  const colorScheme = useColorScheme();
+  return <FontAwesome size={28} style={{ marginBottom: -3 }} color={Colors[colorScheme ?? 'light'].ui3} {...props} />;
 }
 
 export default function TabLayout() {
@@ -36,7 +35,7 @@ export default function TabLayout() {
         name="one"
         options={{
           title: 'Add fines',
-          tabBarIcon: () => <TabBarIcon name="home" lightColor={Colors.light.cyan} darkColor={Colors.dark.cyan} />,
+          tabBarIcon: () => <TabBarIcon name="home" />,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -57,14 +56,14 @@ export default function TabLayout() {
         name="two"
         options={{
           title: 'Overview',
-          tabBarIcon: () => <TabBarIcon name="table" lightColor={Colors.light.cyan} darkColor={Colors.dark.cyan} />,
+          tabBarIcon: () => <TabBarIcon name="table" />,
         }}
       />
       <Tabs.Screen
         name="three"
         options={{
           title: 'Settings',
-          tabBarIcon: () => <TabBarIcon name="gear" lightColor={Colors.light.cyan} darkColor={Colors.dark.cyan} />,
+          tabBarIcon: () => <TabBarIcon name="gear" />,
         }}
       />
       </Tabs>
