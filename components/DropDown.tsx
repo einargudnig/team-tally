@@ -13,7 +13,7 @@ export function Dropdown(data: any) {
     <View>
       <RNPickerSelect
         onValueChange={(value) => handleChanged(value)}
-        items={data}
+        items={data.data}
         key={data.key}
         style={pickerSelectStyles}
       />
