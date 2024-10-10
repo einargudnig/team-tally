@@ -1,8 +1,10 @@
 import { StyleSheet } from "react-native";
 import { useUser } from "@clerk/clerk-expo";
-import { Text, View, Button } from "@/components/Themed";
+import { Text, View, Button, IconButton } from "@/components/Themed";
 import { Dropdown } from "@/components/DropDown";
 import Colors from "@/constants/Colors";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useColorScheme } from "@/components/useColorScheme";
 
 const testUsers = [
   { label: "Joe", value: "joe", key: "joe" },
@@ -12,6 +14,37 @@ const testUsers = [
   { label: "Josh", value: "josh", key: "josh" },
   { label: "Frank", value: "frank", key: "frank" },
 ];
+
+const testFines = [
+  { label: "Late", value: "late", key: "late" },
+  { label: "No show", value: "no-show", key: "no-show" },
+  {
+    label: "Forgot equipment",
+    value: "forgot-equipment",
+    key: "forgot-equipment",
+  },
+  { label: "No payment", value: "no-payment", key: "no-payment" },
+  { label: "No effort", value: "no-effort", key: "no-effort" },
+  {
+    label: "No communication",
+    value: "no-communication",
+    key: "no-communication",
+  },
+];
+
+function AddIcon(props: {
+  name: React.ComponentProps<typeof FontAwesome>["name"];
+}) {
+  const colorScheme = useColorScheme();
+  return (
+    <FontAwesome
+      size={42}
+      style={{ marginBottom: -3 }}
+      color={Colors[colorScheme ?? "light"].ui2}
+      {...props}
+    />
+  );
+}
 
 export default function TabOneScreen() {
   const { user } = useUser();
@@ -45,15 +78,20 @@ export default function TabOneScreen() {
       />
       <View style={styles.smallContainer}>
         <Text style={styles.secondaryTitle}>Choose a player:</Text>
-        <Dropdown data={testUsers} />
-        <View
-          style={styles.separator}
-          lightColor={Colors.light.ui2}
-          darkColor={Colors.dark.ui2}
-        />
+        <View style={styles.dropdownContainer}>
+          <Dropdown data={testUsers} />
+          <IconButton>
+            <AddIcon name="plus-square-o" />
+          </IconButton>
+        </View>
 
         <Text style={styles.secondaryTitle}>Choose a fine:</Text>
-        <Dropdown data={testUsers} />
+        <View style={styles.dropdownContainer}>
+          <Dropdown data={testFines} />
+          <IconButton>
+            <AddIcon name="plus-square-o" />
+          </IconButton>
+        </View>
 
         <Button title="Add fine to player" style={styles.button} />
       </View>
@@ -98,5 +136,12 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     marginVertical: 30,
+  },
+  dropdownContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
   },
 });

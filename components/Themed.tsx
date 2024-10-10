@@ -133,3 +133,8 @@ export function Button(props: any) {
     </Pressable>
   );
 }
+
+export function IconButton(props: any) {
+  const { onPress, children } = props;
+  return <Pressable onPress={onPress}>{children}</Pressable>;
+}

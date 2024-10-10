@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import { View } from "./Themed";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 export function Dropdown(data: any) {
   console.log({ data });
@@ -28,17 +29,17 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: "gray",
-    color: "black",
     paddingRight: 30, // to ensure the text is never behind the icon
     borderRadius: 8,
     width: 250,
+    color: Colors.dark.tx,
   },
   inputAndroid: {
     fontSize: 16,
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 0.5,
-    borderColor: "purple",
+    borderColor: "gray",
     borderRadius: 8,
     color: "black",
     paddingRight: 30, // to ensure the text is never behind the icon
