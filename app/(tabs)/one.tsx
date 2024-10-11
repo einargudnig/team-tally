@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { Link } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Text, View, Button, IconButton } from "@/components/Themed";
 import { Dropdown } from "@/components/DropDown";
@@ -46,6 +47,8 @@ function AddIcon(props: {
   );
 }
 
+const openModal = () => {};
+
 export default function TabOneScreen() {
   const { user } = useUser();
   console.log("user in first tab component", user?.id);
@@ -80,9 +83,9 @@ export default function TabOneScreen() {
         <Text style={styles.secondaryTitle}>Choose a player:</Text>
         <View style={styles.dropdownContainer}>
           <Dropdown data={testUsers} />
-          <IconButton>
+          <Link href="/modal">
             <AddIcon name="plus-square-o" />
-          </IconButton>
+          </Link>
         </View>
 
         <Text style={styles.secondaryTitle}>Choose a fine:</Text>
