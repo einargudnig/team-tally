@@ -1,4 +1,5 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Modal, Pressable } from "react-native";
+import { useState } from "react";
 import { Link } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Text, View, Button, IconButton } from "@/components/Themed";
@@ -47,17 +48,36 @@ function AddIcon(props: {
   );
 }
 
-const openModal = () => {};
-
 export default function TabOneScreen() {
+  const [modalVisible, setModalVisible] = useState(false);
   const { user } = useUser();
-  console.log("user in first tab component", user?.id);
   return (
     <View
       style={styles.container}
       lightColor={Colors.light.bg}
       darkColor={Colors.dark.bg}
     >
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>
+              OPen Modal!
+            </Text>
+            <Pressable onPress={() => setModalVisible(!modalVisible)}>
+              <Text lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>
+                Hide Modal
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
       <Text
         style={styles.title}
         lightColor={Colors.light.tx}
@@ -79,17 +99,29 @@ export default function TabOneScreen() {
         lightColor={Colors.light.ui2}
         darkColor={Colors.dark.ui2}
       />
-      <View style={styles.smallContainer}>
+      <View
+        style={styles.smallContainer}
+        lightColor={Colors.light.bg}
+        darkColor={Colors.dark.bg}
+      >
         <Text style={styles.secondaryTitle}>Choose a player:</Text>
-        <View style={styles.dropdownContainer}>
+        <View
+          style={styles.dropdownContainer}
+          lightColor={Colors.light.bg}
+          darkColor={Colors.dark.bg}
+        >
           <Dropdown data={testUsers} />
-          <Link href="/modal">
+          <Pressable onPress={() => setModalVisible(true)}>
             <AddIcon name="plus-square-o" />
-          </Link>
+          </Pressable>
         </View>
 
         <Text style={styles.secondaryTitle}>Choose a fine:</Text>
-        <View style={styles.dropdownContainer}>
+        <View
+          style={styles.dropdownContainer}
+          lightColor={Colors.light.bg}
+          darkColor={Colors.dark.bg}
+        >
           <Dropdown data={testFines} />
           <IconButton>
             <AddIcon name="plus-square-o" />
@@ -107,6 +139,27 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "Colors.dark.bg",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   smallContainer: {
     marginTop: 20,
