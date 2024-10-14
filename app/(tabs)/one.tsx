@@ -71,9 +71,15 @@ export default function TabOneScreen() {
               OPen Modal!
             </Text>
             <Pressable onPress={() => setModalVisible(!modalVisible)}>
-              <Text lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>
-                Hide Modal
-              </Text>
+              <View
+                style={styles.button}
+                lightColor={Colors.light.ui}
+                darkColor={Colors.dark.ui}
+              >
+                <Text lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>
+                  Close Modal
+                </Text>
+              </View>
             </Pressable>
           </View>
         </View>
