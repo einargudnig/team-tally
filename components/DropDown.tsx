@@ -4,8 +4,6 @@ import { View } from "./Themed";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
 export function Dropdown(data: any) {
-  console.log({ data });
-
   const handleChanged = (value: string) => {
     console.log(value);
   };

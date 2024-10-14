@@ -4,6 +4,7 @@ import { Link } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Text, View, Button, IconButton } from "@/components/Themed";
 import { Dropdown } from "@/components/DropDown";
+import { QuickAddModal } from "@/components/QuickAddModal";
 import Colors from "@/constants/Colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useColorScheme } from "@/components/useColorScheme";
@@ -49,7 +50,8 @@ function AddIcon(props: {
 }
 
 export default function TabOneScreen() {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [fineModalVisible, setFineModalVisible] = useState(false);
+  const [userModalVisible, setUserModalVisible] = useState(false);
   const { user } = useUser();
   return (
     <View
@@ -57,33 +59,17 @@ export default function TabOneScreen() {
       lightColor={Colors.light.bg}
       darkColor={Colors.dark.bg}
     >
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>
-              OPen Modal!
-            </Text>
-            <Pressable onPress={() => setModalVisible(!modalVisible)}>
-              <View
-                style={styles.button}
-                lightColor={Colors.light.ui}
-                darkColor={Colors.dark.ui}
-              >
-                <Text lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>
-                  Close Modal
-                </Text>
-              </View>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+      <QuickAddModal
+        title="fine"
+        visible={fineModalVisible}
+        setState={() => setFineModalVisible(!fineModalVisible)}
+      />
+
+      <QuickAddModal
+        title="user"
+        visible={userModalVisible}
+        setState={() => setUserModalVisible(!userModalVisible)}
+      />
       <Text
         style={styles.title}
         lightColor={Colors.light.tx}
@@ -117,7 +103,7 @@ export default function TabOneScreen() {
           darkColor={Colors.dark.bg}
         >
           <Dropdown data={testUsers} />
-          <Pressable onPress={() => setModalVisible(true)}>
+          <Pressable onPress={() => setFineModalVisible(true)}>
             <AddIcon name="plus-square-o" />
           </Pressable>
         </View>
@@ -129,9 +115,9 @@ export default function TabOneScreen() {
           darkColor={Colors.dark.bg}
         >
           <Dropdown data={testFines} />
-          <IconButton>
+          <Pressable onPress={() => setUserModalVisible(true)}>
             <AddIcon name="plus-square-o" />
-          </IconButton>
+          </Pressable>
         </View>
 
         <Button title="Add fine to player" style={styles.button} />
