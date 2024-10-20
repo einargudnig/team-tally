@@ -7,6 +7,7 @@ import { QuickAddModal } from "@/components/QuickAddModal";
 import Colors from "@/constants/Colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useColorScheme } from "@/components/useColorScheme";
+import { Link } from "expo-router";
 
 const testUsers = [
   { label: "Joe", value: "joe", key: "joe" },
@@ -119,6 +120,11 @@ export default function TabOneScreen() {
           </Pressable>
         </View>
 
+        <Link href="/team-login">
+          <Text lightColor={Colors.light.tx} darkColor={Colors.dark.tx}>
+            to team login
+          </Text>
+        </Link>
         <Button title="Add fine to player" style={styles.button} />
       </View>
     </View>
