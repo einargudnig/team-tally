@@ -1,8 +1,7 @@
-import { StyleSheet, Modal, Pressable } from "react-native";
+import { StyleSheet, Pressable } from "react-native";
 import { useState } from "react";
-import { Link } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
-import { Text, View, Button, IconButton } from "@/components/Themed";
+import { Text, View, Button } from "@/components/Themed";
 import { Dropdown } from "@/components/DropDown";
 import { QuickAddModal } from "@/components/QuickAddModal";
 import Colors from "@/constants/Colors";
