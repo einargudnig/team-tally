@@ -8,7 +8,7 @@ import { supabase } from "../../utils/supabase";
 export default function () {
   GoogleSignin.configure({
     scopes: ["https://www.googleapis.com/auth/drive.readonly"],
-    webClientId: "YOUR CLIENT ID FROM GOOGLE CONSOLE",
+    webClientId: "team-tally-439216",
   });
 
   return (
@@ -19,15 +19,15 @@ export default function () {
         try {
           await GoogleSignin.hasPlayServices();
           const userInfo = await GoogleSignin.signIn();
-          if (userInfo.data.idToken) {
-            const { data, error } = await supabase.auth.signInWithIdToken({
-              provider: "google",
-              token: userInfo.data.idToken,
-            });
-            console.log(error, data);
-          } else {
-            throw new Error("no ID token present!");
-          }
+          // if (userInfo.data.idToken) {
+          //   const { data, error } = await supabase.auth.signInWithIdToken({
+          //     provider: "google",
+          //     token: userInfo.data.idToken,
+          //   });
+          //   console.log(error, data);
+          // } else {
+          //   throw new Error("no ID token present!");
+          // }
         } catch (error: any) {
           if (error.code === statusCodes.SIGN_IN_CANCELLED) {
             // user cancelled the login flow
