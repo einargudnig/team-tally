@@ -1,0 +1,13 @@
+{
+  "name": "@team-tally/shared",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "dev": "bun --watch index.ts"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "team-tally",
+  "verison": "0.0.1",
+  "module": "index.ts",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --filter '*' dev",
+    "build": "bun run --filter '*' build",
+    "dev:api": "bun run --filter @team-tally/api dev",
+    "dev:web": "bun run --filter @team-tally/web dev",
+    "dev:shared": "bun run --filter @team-tally/shared dev"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
