@@ -7,17 +7,17 @@ function App() {
 
   useEffect(() => {
     // Type-safe API call!
-    api.users["123"].get().then(({ data }) => {
-      if (data) setUser(data);
+    api.users["123"].get().then((response: any) => {
+      if (response.data?.user) setUser(response.data.user);
     });
   }, []);
 
   const createUser = async () => {
-    const { data } = await api.users.post({
+    const response = await api.users.post({
       name: "Jane Doe",
       email: "jane@example.com",
     });
-    console.log(data);
+    console.log(response.data);
   };
 
   return (
