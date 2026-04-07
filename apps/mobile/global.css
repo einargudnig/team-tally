@@ -2,6 +2,13 @@
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css";
 
+/* Override preflight default text color for dark app */
+@layer base {
+  * {
+    color: #fff;
+  }
+}
+
 /* Platform-specific font families */
 @media android {
   :root {
