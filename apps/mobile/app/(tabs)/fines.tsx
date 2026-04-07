@@ -110,11 +110,7 @@ export default function FinesScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View className="flex-1 bg-black">
-        <View className="px-4 pt-14 pb-4">
-          <Text className="text-white text-2xl font-bold">Fine Types</Text>
-        </View>
-
-        <View className="px-4 flex-1">
+        <View className="px-4 pt-4 flex-1">
           {/* Add fine type button */}
           {!showForm && (
             <Pressable

@@ -4,7 +4,7 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { ActivityIndicator } from "react-native";
 import { View } from "@/src/tw";
 import * as SplashScreen from "expo-splash-screen";
-import { getTeam } from "../db/queries";
+import { getTeam } from "@/db/queries";
 
 export { ErrorBoundary } from "expo-router";
 

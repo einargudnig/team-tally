@@ -2,8 +2,8 @@ import { useState } from "react";
 import { KeyboardAvoidingView } from "react-native";
 import { View, Text, TextInput, Pressable, ScrollView } from "@/src/tw";
 import { useRouter } from "expo-router";
-import { createTeam } from "../../db/queries";
-import { currencies } from "../../lib/currency";
+import { createTeam } from "@/db/queries";
+import { currencies } from "@/lib/currency";
 
 export default function OnboardingScreen() {
   const router = useRouter();

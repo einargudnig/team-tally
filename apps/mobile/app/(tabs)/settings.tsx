@@ -2,8 +2,8 @@ import { useState, useCallback } from "react";
 import { KeyboardAvoidingView } from "react-native";
 import { View, Text, TextInput, Pressable, ScrollView } from "@/src/tw";
 import { useFocusEffect } from "expo-router";
-import { getTeam, updateTeam } from "../../db/queries";
-import { currencies } from "../../lib/currency";
+import { getTeam, updateTeam } from "@/db/queries";
+import { currencies } from "@/lib/currency";
 
 export default function SettingsScreen() {
   const [teamId, setTeamId] = useState<string | null>(null);
