@@ -1,60 +1,66 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-import '../global.css';
+import "../global.css";
+import { useEffect, useState } from "react";
+import { Stack, useRouter, useSegments } from "expo-router";
+import { ActivityIndicator } from "react-native";
+import { View } from "@/src/tw";
+import * as SplashScreen from "expo-splash-screen";
+import { getTeam } from "../db/queries";
 
-import { useColorScheme } from '@/components/useColorScheme';
+export { ErrorBoundary } from "expo-router";
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
-
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-};
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
-  });
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasTeam, setHasTeam] = useState(false);
+  const router = useRouter();
+  const segments = useSegments();
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    const team = getTeam();
+    setHasTeam(!!team);
+    setIsLoading(false);
+    SplashScreen.hideAsync();
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+    const inOnboarding = segments[0] === "onboarding";
+    if (!hasTeam && !inOnboarding) {
+      router.replace("/onboarding");
+    } else if (hasTeam && inOnboarding) {
+      router.replace("/(tabs)");
     }
-  }, [loaded]);
+  }, [isLoading, hasTeam, segments]);
 
-  if (!loaded) {
-    return null;
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-black">
+        <ActivityIndicator size="large" color="#5b5bf7" />
+      </View>
+    );
   }
 
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="onboarding" />
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen
+        name="add-fine"
+        options={{
+          presentation: "formSheet",
+          sheetGrabberVisible: true,
+        }}
+      />
+      <Stack.Screen
+        name="player/[id]"
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#0d0d1a" },
+          headerTintColor: "#fff",
+          title: "Player",
+        }}
+      />
+    </Stack>
   );
 }
