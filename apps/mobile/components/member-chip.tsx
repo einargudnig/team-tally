@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "@/src/tw";
+import { Pressable, Text, View } from "react-native";
 
 interface MemberChipProps {
   name: string;

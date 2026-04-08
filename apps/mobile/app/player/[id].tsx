@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { Alert } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useFocusEffect } from "expo-router";
-import { View, Text, ScrollView, Pressable } from "@/src/tw";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { getTeam, getMembers, getPlayerDetail, deleteFineEntry } from "@/db/queries";
 import { formatAmount } from "@/lib/currency";
 import { PlayerAvatar } from "@/components/player-avatar";

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { useRouter } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { View, Text, ScrollView, Pressable } from "@/src/tw";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import { getTeam, getMembers, getFineTypes, createFineEntry } from "@/db/queries";
 import { formatAmount } from "@/lib/currency";
 import { MemberChip } from "@/components/member-chip";

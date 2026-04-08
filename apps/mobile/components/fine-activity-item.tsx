@@ -1,4 +1,4 @@
-import { View, Text } from "@/src/tw";
+import { View, Text } from "react-native";
 
 interface FineActivityItemProps {
   memberName: string;

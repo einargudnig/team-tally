@@ -2,7 +2,7 @@ import "../global.css";
 import { useEffect, useState } from "react";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { ActivityIndicator } from "react-native";
-import { View } from "@/src/tw";
+import { View } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import { getTeam } from "@/db/queries";
 

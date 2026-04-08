@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { FlatList, Alert, KeyboardAvoidingView, Platform } from "react-native";
 import { useFocusEffect } from "expo-router";
-import { View, Text, TextInput, Pressable } from "@/src/tw";
+import { View, Text, TextInput, Pressable } from "react-native";
 import { getTeam, getFineTypes, createFineType, deleteFineType } from "@/db/queries";
 import { formatAmount } from "@/lib/currency";
 

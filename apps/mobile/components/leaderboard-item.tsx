@@ -1,4 +1,4 @@
-import { Pressable, View, Text } from "@/src/tw";
+import { Pressable, View, Text } from "react-native";
 import { PlayerAvatar } from "./player-avatar";
 
 interface LeaderboardItemProps {

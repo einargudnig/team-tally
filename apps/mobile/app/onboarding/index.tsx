@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { KeyboardAvoidingView } from "react-native";
-import { View, Text, TextInput, Pressable, ScrollView } from "@/src/tw";
+import { View, Text, TextInput, Pressable, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { createTeam } from "@/db/queries";
 import { currencies } from "@/lib/currency";

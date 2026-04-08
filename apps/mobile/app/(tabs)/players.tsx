@@ -1,5 +1,5 @@
 import { FlatList, Alert } from "react-native";
-import { View, Text, TextInput, Pressable } from "@/src/tw";
+import { View, Text, TextInput, Pressable } from "react-native";
 import { useState, useCallback } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import { getTeam, getMembers, createMember, deleteMember } from "@/db/queries";

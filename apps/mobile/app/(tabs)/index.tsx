@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, Pressable } from "@/src/tw";
+import { ScrollView, View, Text, Pressable } from "react-native";
 import { useCallback, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import { getTeam, getLeaderboard, getRecentActivity, getTotalOutstanding, getMembers } from "@/db/queries";
