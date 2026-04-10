@@ -9,14 +9,22 @@ interface FineActivityItemProps {
 
 export function FineActivityItem({ memberName, fineTypeName, amount, date }: FineActivityItemProps) {
   return (
-    <View className="flex-row justify-between items-center bg-gray-900/50 rounded-xl px-3 py-2.5 mb-1.5">
+    <View className="flex-row items-center min-h-[44px] py-3 border-b border-border">
       <View className="flex-1">
-        <Text className="text-white text-sm">
-          <Text className="font-semibold">{memberName}</Text>{" · "}{fineTypeName}
+        <Text className="text-text-primary text-sm">
+          <Text className="font-semibold">{memberName}</Text>
+          {" — "}
+          {fineTypeName}
         </Text>
-        <Text className="text-gray-600 text-xs mt-0.5">{date}</Text>
+        <Text className="text-text-muted text-xs mt-0.5">{date}</Text>
       </View>
-      <Text className="text-red-400 text-sm">{amount}</Text>
+      <Text
+        className="text-danger text-sm font-medium"
+        selectable
+        style={{ fontVariant: ["tabular-nums"] }}
+      >
+        {amount}
+      </Text>
     </View>
   );
 }

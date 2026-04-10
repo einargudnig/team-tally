@@ -1,0 +1,32 @@
+---
+// I. Chip-Comb-Mountain — 5 teeth with a mountain height profile
+// (short · medium · tall · medium · short). The tallest tooth in the
+// middle reads as the T stem; the symmetric slope also reads as a
+// leaderboard/podium from the side. Highest info density — watch the
+// 32 px size, it's right at the edge of legibility.
+interface Props { size?: number; title?: string; }
+const { size = 48, title = "Team Tally" } = Astro.props;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 32 32"
+  width={size}
+  height={size}
+  role="img"
+  aria-label={title}
+>
+  <rect x="2" y="2" width="28" height="28" rx="7" fill="currentColor" />
+  <!-- rail (shifted +2 for optical centering) -->
+  <rect x="5.5" y="10" width="21" height="2.5" rx="1" fill="var(--logo-cut, #0f0f14)" />
+  <!-- tooth 1 (short) -->
+  <rect x="8.1" y="12.5" width="1.8" height="8" rx="0.9" fill="var(--logo-cut, #0f0f14)" />
+  <!-- tooth 2 (medium) -->
+  <rect x="11.6" y="12.5" width="1.8" height="11" rx="0.9" fill="var(--logo-cut, #0f0f14)" />
+  <!-- tooth 3 (tallest — T stem) -->
+  <rect x="15.1" y="12.5" width="1.8" height="14" rx="0.9" fill="var(--logo-cut, #0f0f14)" />
+  <!-- tooth 4 (medium) -->
+  <rect x="18.6" y="12.5" width="1.8" height="11" rx="0.9" fill="var(--logo-cut, #0f0f14)" />
+  <!-- tooth 5 (short) -->
+  <rect x="22.1" y="12.5" width="1.8" height="8" rx="0.9" fill="var(--logo-cut, #0f0f14)" />
+</svg>

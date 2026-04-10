@@ -1,29 +1,39 @@
-import { Pressable, View, Text } from "react-native";
+import { View, Text } from "react-native";
+import { Link } from "expo-router";
 import { PlayerAvatar } from "./player-avatar";
 
 interface LeaderboardItemProps {
   rank: number;
   name: string;
   total: string;
-  onPress: () => void;
+  href: string;
 }
 
-function getRankColor(rank: number): string {
-  if (rank === 1) return "text-yellow-400";
-  if (rank === 2) return "text-gray-400";
-  if (rank === 3) return "text-amber-600";
-  return "text-gray-600";
-}
+export function LeaderboardItem({ rank, name, total, href }: LeaderboardItemProps) {
+  const rankColor =
+    rank === 1 ? "text-primary" :
+    rank === 2 ? "text-text-secondary" :
+    rank === 3 ? "text-primary-dim" :
+    "text-text-muted";
 
-export function LeaderboardItem({ rank, name, total, onPress }: LeaderboardItemProps) {
   return (
-    <Pressable onPress={onPress} className="flex-row items-center bg-gray-900/50 rounded-xl px-3 py-3 mb-1.5">
-      <Text className={`font-bold w-6 text-center ${getRankColor(rank)}`}>{rank}</Text>
-      <View className="ml-2">
+    <Link href={href as any} asChild>
+      <View
+        className="flex-row items-center min-h-[44px] py-3 border-b border-border"
+        accessibilityRole="button"
+        accessibilityLabel={`${name}, rank ${rank}, ${total} in fines`}
+      >
+        <Text className={`w-7 text-sm font-medium ${rankColor}`}>{rank}</Text>
         <PlayerAvatar name={name} size={32} />
+        <Text className="flex-1 text-text-primary text-base ml-3">{name}</Text>
+        <Text
+          className="text-danger text-sm font-semibold"
+          selectable
+          style={{ fontVariant: ["tabular-nums"] }}
+        >
+          {total}
+        </Text>
       </View>
-      <Text className="text-white text-sm ml-3 flex-1">{name}</Text>
-      <Text className="text-red-400 font-semibold text-sm">{total}</Text>
-    </Pressable>
+    </Link>
   );
 }

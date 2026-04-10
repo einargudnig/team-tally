@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { ActivityIndicator } from "react-native";
 import { View } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
 import { getTeam } from "@/db/queries";
 
@@ -35,13 +36,15 @@ export default function RootLayout() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-black">
-        <ActivityIndicator size="large" color="#5b5bf7" />
+      <View className="flex-1 items-center justify-center bg-surface">
+        <ActivityIndicator size="large" color="#f59e0b" />
       </View>
     );
   }
 
   return (
+    <>
+    <StatusBar style="light" />
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="onboarding" />
       <Stack.Screen name="(tabs)" />
@@ -50,17 +53,26 @@ export default function RootLayout() {
         options={{
           presentation: "formSheet",
           sheetGrabberVisible: true,
+          sheetAllowedDetents: [0.75, 1.0],
+          headerShown: true,
+          title: "Add Fine",
+          headerStyle: { backgroundColor: "#0f0f14" },
+          headerTintColor: "#f5f5f5",
+          headerShadowVisible: false,
+          contentStyle: { backgroundColor: "#0f0f14" },
         }}
       />
       <Stack.Screen
         name="player/[id]"
         options={{
           headerShown: true,
-          headerStyle: { backgroundColor: "#0d0d1a" },
-          headerTintColor: "#fff",
+          headerStyle: { backgroundColor: "#0f0f14" },
+          headerTintColor: "#f5f5f5",
+          headerShadowVisible: false,
           title: "Player",
         }}
       />
     </Stack>
+    </>
   );
 }

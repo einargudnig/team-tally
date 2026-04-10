@@ -1,0 +1,244 @@
+---
+// Pure-CSS phone mockup rendering a fake Team Tally home screen.
+// No external images — everything is SVG/HTML so it stays crisp and
+// contributes to the LCP without an extra network request.
+---
+
+<div class="phone" aria-hidden="true">
+  <div class="phone-frame">
+    <div class="phone-notch"></div>
+    <div class="phone-screen">
+      <!-- Status bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <span class="status-icons">
+          <svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M0 8h2v2H0zM4 6h2v4H4zM8 3h2v7H8zM12 0h2v10h-2z" fill="#f5f5f5"/></svg>
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><rect x="0.5" y="0.5" width="11" height="9" rx="2" stroke="#f5f5f5"/><rect x="2" y="2" width="8" height="6" rx="1" fill="#f5f5f5"/></svg>
+        </span>
+      </div>
+
+      <!-- Header -->
+      <div class="screen-header">
+        <p class="kicker">12 PLAYERS</p>
+        <h3>Hafnarfjörður FC</h3>
+      </div>
+
+      <!-- Outstanding card -->
+      <div class="card outstanding">
+        <p class="kicker">OUTSTANDING</p>
+        <p class="amount">47.250 kr</p>
+      </div>
+
+      <!-- Leaderboard -->
+      <p class="section-label">LEADERBOARD</p>
+      <div class="leaderboard">
+        <div class="lb-row">
+          <span class="rank rank-1">1</span>
+          <span class="name">Jón Sigurðsson</span>
+          <span class="total">12.500 kr</span>
+        </div>
+        <div class="lb-row">
+          <span class="rank rank-2">2</span>
+          <span class="name">Einar Björnsson</span>
+          <span class="total">9.750 kr</span>
+        </div>
+        <div class="lb-row">
+          <span class="rank rank-3">3</span>
+          <span class="name">Ragnar Þór</span>
+          <span class="total">8.000 kr</span>
+        </div>
+        <div class="lb-row">
+          <span class="rank">4</span>
+          <span class="name">Magnús K.</span>
+          <span class="total">6.500 kr</span>
+        </div>
+      </div>
+
+      <!-- Recent -->
+      <p class="section-label">RECENT</p>
+      <div class="activity">
+        <div class="act-row">
+          <div>
+            <p class="act-name">Jón Sigurðsson</p>
+            <p class="act-type">Late to practice</p>
+          </div>
+          <span class="act-amount">+2.500 kr</span>
+        </div>
+        <div class="act-row">
+          <div>
+            <p class="act-name">Einar Björnsson</p>
+            <p class="act-type">Phone in dressing room</p>
+          </div>
+          <span class="act-amount">+1.000 kr</span>
+        </div>
+      </div>
+
+      <!-- FAB -->
+      <button class="fab" tabindex="-1" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0f0f14" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="phone-glow"></div>
+</div>
+
+<style>
+  .phone {
+    position: relative;
+    width: 280px;
+    aspect-ratio: 280 / 570;
+    margin: 0 auto;
+  }
+  .phone-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #2a2a36 0%, #1a1a24 100%);
+    border-radius: 44px;
+    padding: 10px;
+    box-shadow:
+      0 0 0 2px #3a3a48,
+      0 40px 80px -20px rgba(0, 0, 0, 0.6),
+      0 20px 40px -10px rgba(245, 158, 11, 0.15);
+  }
+  .phone-notch {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 24px;
+    background: #0f0f14;
+    border-radius: 14px;
+    z-index: 2;
+  }
+  .phone-screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: var(--surface);
+    border-radius: 34px;
+    overflow: hidden;
+    padding: 40px 16px 16px;
+  }
+  .phone-glow {
+    position: absolute;
+    inset: -40px;
+    background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.15), transparent 60%);
+    z-index: -1;
+    filter: blur(40px);
+    pointer-events: none;
+  }
+
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 6px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .status-icons { display: flex; gap: 4px; align-items: center; }
+
+  .screen-header { padding: 0 6px 14px; }
+  .kicker {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+  .screen-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 2px;
+    color: var(--text-primary);
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  .outstanding .amount {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .section-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding: 0 6px;
+    margin-bottom: 6px;
+  }
+
+  .leaderboard { margin-bottom: 14px; }
+  .lb-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .lb-row:last-child { border-bottom: none; }
+  .rank {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--card-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+  .rank-1 { background: var(--primary); color: var(--surface); }
+  .rank-2 { background: #d1d5db; color: var(--surface); }
+  .rank-3 { background: #b45309; color: var(--text-primary); }
+  .name { flex: 1; font-size: 12px; font-weight: 500; color: var(--text-primary); }
+  .total { font-size: 12px; font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+
+  .activity { }
+  .act-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .act-row:last-child { border-bottom: none; }
+  .act-name { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+  .act-type { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+  .act-amount {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fab {
+    position: absolute;
+    right: 18px;
+    bottom: 22px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: none;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px -4px rgba(245, 158, 11, 0.45);
+  }
+</style>

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { View, Text } from "react-native";
 
 interface PlayerAvatarProps {
@@ -6,14 +7,22 @@ interface PlayerAvatarProps {
 }
 
 export function PlayerAvatar({ name, size = 40 }: PlayerAvatarProps) {
-  const initial = name.charAt(0).toUpperCase();
+  const letter = name.charAt(0).toUpperCase();
+  const styles = useMemo(
+    () => ({
+      container: { width: size, height: size, borderCurve: "continuous" as const },
+      text: { fontSize: size * 0.4 },
+    }),
+    [size]
+  );
+
   return (
     <View
-      className="bg-indigo-900/50 items-center justify-center rounded-full"
-      style={{ width: size, height: size }}
+      className="items-center justify-center rounded-full bg-primary-muted"
+      style={styles.container}
     >
-      <Text className="text-indigo-300 font-semibold" style={{ fontSize: size * 0.4 }}>
-        {initial}
+      <Text className="font-semibold text-primary" style={styles.text}>
+        {letter}
       </Text>
     </View>
   );

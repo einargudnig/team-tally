@@ -1,27 +1,15 @@
-import { useEffect, useState } from "react";
-import { Platform } from "react-native";
-import { useRouter } from "expo-router";
+import { useEffect, useState, useRef } from "react";
+import { Platform, StyleSheet } from "react-native";
+import { useRouter, Stack } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { View, Text, ScrollView, Pressable } from "react-native";
+import * as Haptics from "expo-haptics";
 import { getTeam, getMembers, getFineTypes, createFineEntry } from "@/db/queries";
 import { formatAmount } from "@/lib/currency";
 import { MemberChip } from "@/components/member-chip";
 
-type Member = {
-  id: string;
-  teamId: string;
-  name: string;
-  createdAt: Date;
-};
-
-type FineType = {
-  id: string;
-  teamId: string;
-  name: string;
-  description: string | null;
-  amount: number;
-  createdAt: Date;
-};
+type Member = { id: string; teamId: string; name: string; createdAt: Date };
+type FineType = { id: string; teamId: string; name: string; description: string | null; amount: number; createdAt: Date };
 
 export default function AddFineScreen() {
   const router = useRouter();
@@ -33,6 +21,7 @@ export default function AddFineScreen() {
   const [selectedFineTypeId, setSelectedFineTypeId] = useState<string | null>(null);
   const [date, setDate] = useState(new Date());
   const [justAdded, setJustAdded] = useState(false);
+  const addedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     const team = getTeam();
@@ -40,6 +29,7 @@ export default function AddFineScreen() {
     setCurrency(team.currency);
     setMembers(getMembers(team.id));
     setFineTypesList(getFineTypes(team.id));
+    return () => { if (addedTimer.current) clearTimeout(addedTimer.current); };
   }, []);
 
   const selectedMember = members.find((m) => m.id === selectedMemberId);
@@ -50,8 +40,9 @@ export default function AddFineScreen() {
     if (!selectedMemberId || !selectedFineTypeId) return;
     const dateStr = date.toISOString().slice(0, 10);
     createFineEntry(selectedFineTypeId, selectedMemberId, dateStr);
+    if (process.env.EXPO_OS === "ios") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setJustAdded(true);
-    setTimeout(() => {
+    addedTimer.current = setTimeout(() => {
       setJustAdded(false);
       setSelectedMemberId(null);
       setSelectedFineTypeId(null);
@@ -60,23 +51,34 @@ export default function AddFineScreen() {
   }
 
   return (
-    <View className="flex-1 bg-black">
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-4 pt-6 pb-4 border-b border-gray-800">
-        <Text className="text-white text-xl font-bold">Add Fine</Text>
-        <Pressable onPress={() => router.back()} className="px-3 py-1.5 active:opacity-70">
-          <Text className="text-indigo-400 text-base font-medium">Done</Text>
-        </Pressable>
-      </View>
+    <View className="flex-1 bg-surface">
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <Pressable
+              onPress={() => router.back()}
+              accessibilityRole="button"
+              accessibilityLabel="Done"
+              hitSlop={8}
+            >
+              <Text className="text-primary text-base font-medium">Done</Text>
+            </Pressable>
+          ),
+        }}
+      />
 
-      <ScrollView className="flex-1" contentContainerClassName="px-4 pb-8">
+      <ScrollView
+        className="flex-1"
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerClassName="px-5 pb-8"
+      >
         {/* Who? */}
         <View className="mt-6">
-          <Text className="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-3">
+          <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mb-3">
             Who?
           </Text>
           {members.length === 0 ? (
-            <Text className="text-gray-600 text-sm">No players yet.</Text>
+            <Text className="text-text-muted text-sm">No players yet.</Text>
           ) : (
             <View className="flex-row flex-wrap gap-2">
               {members.map((member) => (
@@ -84,11 +86,7 @@ export default function AddFineScreen() {
                   key={member.id}
                   name={member.name}
                   selected={member.id === selectedMemberId}
-                  onPress={() =>
-                    setSelectedMemberId(
-                      member.id === selectedMemberId ? null : member.id
-                    )
-                  }
+                  onPress={() => setSelectedMemberId(member.id === selectedMemberId ? null : member.id)}
                 />
               ))}
             </View>
@@ -97,11 +95,11 @@ export default function AddFineScreen() {
 
         {/* What for? */}
         <View className="mt-8">
-          <Text className="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-3">
+          <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mb-3">
             What for?
           </Text>
           {fineTypesList.length === 0 ? (
-            <Text className="text-gray-600 text-sm">No fine types yet.</Text>
+            <Text className="text-text-muted text-sm">No fine types yet.</Text>
           ) : (
             <View className="gap-2">
               {fineTypesList.map((ft) => {
@@ -109,37 +107,28 @@ export default function AddFineScreen() {
                 return (
                   <Pressable
                     key={ft.id}
-                    onPress={() =>
-                      setSelectedFineTypeId(ft.id === selectedFineTypeId ? null : ft.id)
-                    }
-                    className={`flex-row items-center justify-between rounded-xl px-4 py-3 active:opacity-70 ${
-                      isSelected
-                        ? "bg-indigo-600"
-                        : "bg-gray-900 border border-gray-700"
+                    onPress={() => setSelectedFineTypeId(ft.id === selectedFineTypeId ? null : ft.id)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: isSelected }}
+                    accessibilityLabel={`${ft.name}, ${formatAmount(ft.amount, currency)}`}
+                    className={`flex-row items-center justify-between rounded-xl px-4 min-h-[44px] py-3 active:opacity-70 ${
+                      isSelected ? "bg-primary" : "bg-card border border-border"
                     }`}
+                    style={styles.card}
                   >
                     <View className="flex-1 mr-3">
-                      <Text
-                        className={`text-base font-semibold ${
-                          isSelected ? "text-white" : "text-gray-200"
-                        }`}
-                      >
+                      <Text className={`text-base font-medium ${isSelected ? "text-surface" : "text-text-primary"}`}>
                         {ft.name}
                       </Text>
                       {ft.description ? (
-                        <Text
-                          className={`text-sm mt-0.5 ${
-                            isSelected ? "text-white/70" : "text-gray-500"
-                          }`}
-                        >
+                        <Text className={`text-sm mt-0.5 ${isSelected ? "text-surface/70" : "text-text-muted"}`}>
                           {ft.description}
                         </Text>
                       ) : null}
                     </View>
                     <Text
-                      className={`text-base font-bold ${
-                        isSelected ? "text-white" : "text-emerald-400"
-                      }`}
+                      className={`text-base font-semibold ${isSelected ? "text-surface" : "text-primary"}`}
+                      style={styles.amount}
                     >
                       {formatAmount(ft.amount, currency)}
                     </Text>
@@ -152,18 +141,16 @@ export default function AddFineScreen() {
 
         {/* When? */}
         <View className="mt-8">
-          <Text className="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-3">
+          <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mb-3">
             When?
           </Text>
-          <View className="bg-gray-900 rounded-xl overflow-hidden">
+          <View className="bg-card rounded-xl overflow-hidden border border-border" style={styles.card}>
             <DateTimePicker
               value={date}
               mode="date"
               display={Platform.OS === "ios" ? "inline" : "default"}
               maximumDate={new Date()}
-              onChange={(_event, selectedDate) => {
-                if (selectedDate) setDate(selectedDate);
-              }}
+              onChange={(_event, selectedDate) => { if (selectedDate) setDate(selectedDate); }}
               themeVariant="dark"
               style={{ alignSelf: "center" }}
             />
@@ -173,22 +160,25 @@ export default function AddFineScreen() {
         {/* Confirm */}
         <View className="mt-8">
           {justAdded ? (
-            <View className="bg-emerald-600 rounded-2xl py-4 items-center">
+            <View className="bg-success rounded-2xl min-h-[48px] justify-center items-center" style={styles.card}>
               <Text className="text-white text-base font-bold">Added!</Text>
             </View>
           ) : (
             <Pressable
               onPress={handleConfirm}
               disabled={!canConfirm}
-              className={`rounded-2xl py-4 items-center active:opacity-80 ${
-                canConfirm ? "bg-indigo-600" : "bg-gray-800"
+              accessibilityRole="button"
+              accessibilityLabel={
+                canConfirm && selectedMember && selectedFineType
+                  ? `Fine ${selectedMember.name} ${formatAmount(selectedFineType.amount, currency)}`
+                  : "Select player and fine type"
+              }
+              className={`rounded-2xl min-h-[48px] justify-center items-center active:opacity-80 ${
+                canConfirm ? "bg-primary" : "bg-card border border-border"
               }`}
+              style={styles.card}
             >
-              <Text
-                className={`text-base font-bold ${
-                  canConfirm ? "text-white" : "text-gray-600"
-                }`}
-              >
+              <Text className={`text-base font-bold ${canConfirm ? "text-surface" : "text-text-muted"}`}>
                 {canConfirm && selectedMember && selectedFineType
                   ? `Fine ${selectedMember.name} — ${formatAmount(selectedFineType.amount, currency)}`
                   : "Select player and fine type"}
@@ -200,3 +190,8 @@ export default function AddFineScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  card: { borderCurve: "continuous" },
+  amount: { fontVariant: ["tabular-nums"] },
+});

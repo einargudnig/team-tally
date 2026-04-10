@@ -1,0 +1,24 @@
+<!--
+  Splash screen mark — 1024x1024, transparent background.
+  Expo splash uses `resizeMode: contain` so the image is displayed at
+  whatever size keeps aspect ratio while fitting the screen. This glyph
+  is a flat mark on transparent, centered, sized ~50% of canvas so it
+  looks right on the dark splash background.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- amber chip (same proportions as the iOS icon, no background fill) -->
+  <rect x="192" y="192" width="640" height="640" rx="160" fill="#f59e0b"/>
+
+  <!-- Comb glyph scaled to fit inside the 640x640 chip (same proportions as iOS icon,
+       scaled down by 640/1024 = 0.625). Mark offsets shift by 192 (chip top-left). -->
+
+  <!-- rail (shifted +55 for optical centering within the chip) -->
+  <rect x="322" y="402" width="380" height="45" rx="17" fill="#0f0f14"/>
+
+  <!-- teeth (shifted +55) -->
+  <rect x="324" y="447" width="35" height="160" rx="17" fill="#0f0f14"/>
+  <rect x="409" y="447" width="35" height="220" rx="17" fill="#0f0f14"/>
+  <rect x="494" y="447" width="35" height="280" rx="17" fill="#0f0f14"/>
+  <rect x="579" y="447" width="35" height="220" rx="17" fill="#0f0f14"/>
+  <rect x="664" y="447" width="35" height="160" rx="17" fill="#0f0f14"/>
+</svg>

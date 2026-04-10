@@ -1,10 +1,14 @@
-import { ScrollView, View, Text, Pressable } from "react-native";
+import { ScrollView, View, Text, Pressable, RefreshControl, StyleSheet } from "react-native";
 import { useCallback, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Plus, TrendingUp } from "lucide-react-native";
+import * as Haptics from "expo-haptics";
 import { getTeam, getLeaderboard, getRecentActivity, getTotalOutstanding, getMembers } from "@/db/queries";
 import { formatAmount } from "@/lib/currency";
 import { LeaderboardItem } from "@/components/leaderboard-item";
 import { FineActivityItem } from "@/components/fine-activity-item";
+import { Logo } from "@/components/logo";
 
 function formatRelativeDate(dateStr: string): string {
   const today = new Date().toISOString().slice(0, 10);
@@ -15,29 +19,22 @@ function formatRelativeDate(dateStr: string): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-type LeaderboardEntry = {
-  memberId: string;
-  memberName: string;
-  total: number;
-};
-
-type ActivityEntry = {
-  id: string;
-  memberName: string;
-  fineTypeName: string;
-  amount: number;
-  date: string;
+type LeaderboardEntry = { memberId: string; memberName: string; total: number };
+type ActivityEntry = { id: string; memberName: string; fineTypeName: string; amount: number; date: string };
+type HomeData = {
+  teamName: string;
+  currency: string;
+  playerCount: number;
+  totalOutstanding: number;
+  leaderboard: LeaderboardEntry[];
+  recentActivity: ActivityEntry[];
 };
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [teamName, setTeamName] = useState<string>("");
-  const [currency, setCurrency] = useState<string>("USD");
-  const [playerCount, setPlayerCount] = useState<number>(0);
-  const [totalOutstanding, setTotalOutstanding] = useState<number>(0);
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [recentActivity, setRecentActivity] = useState<ActivityEntry[]>([]);
-  const [hasTeam, setHasTeam] = useState(false);
+  const insets = useSafeAreaInsets();
+  const [data, setData] = useState<HomeData | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -48,62 +45,80 @@ export default function HomeScreen() {
   function loadData() {
     const team = getTeam();
     if (!team) {
-      setHasTeam(false);
+      setData(null);
       return;
     }
-    setHasTeam(true);
-    setTeamName(team.name);
-    setCurrency(team.currency);
-
-    const members = getMembers(team.id);
-    setPlayerCount(members.length);
-
-    const total = getTotalOutstanding(team.id);
-    setTotalOutstanding(total);
-
-    const board = getLeaderboard(team.id);
-    setLeaderboard(board);
-
-    const activity = getRecentActivity(team.id);
-    setRecentActivity(activity);
+    setData({
+      teamName: team.name,
+      currency: team.currency,
+      playerCount: getMembers(team.id).length,
+      totalOutstanding: getTotalOutstanding(team.id),
+      leaderboard: getLeaderboard(team.id),
+      recentActivity: getRecentActivity(team.id),
+    });
   }
 
-  if (!hasTeam) {
+  function onRefresh() {
+    setRefreshing(true);
+    loadData();
+    setRefreshing(false);
+  }
+
+  if (!data) {
     return (
-      <View className="flex-1 items-center justify-center bg-black">
-        <Text className="text-gray-500 text-base">No team set up yet.</Text>
+      <View className="flex-1 items-center justify-center bg-surface">
+        <Text className="text-text-muted text-base">No team set up yet.</Text>
       </View>
     );
   }
 
+  const { teamName, currency, playerCount, totalOutstanding, leaderboard, recentActivity } = data;
   const hasFines = recentActivity.length > 0;
 
   return (
-    <View className="flex-1 bg-black">
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+    <View className="flex-1 bg-surface">
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#f59e0b" />
+        }
+      >
         {/* Header */}
-        <View className="px-4 pt-4 pb-2">
-          <Text className="text-white text-2xl font-bold">{teamName}</Text>
-          <Text className="text-gray-500 text-sm mt-0.5">
-            {playerCount} {playerCount === 1 ? "player" : "players"}
-          </Text>
+        <View
+          className="px-5 pb-2 flex-row items-start justify-between"
+          style={{ paddingTop: insets.top + 8 }}
+        >
+          <View className="flex-1">
+            <Text className="text-text-secondary text-xs font-medium uppercase tracking-widest">
+              {playerCount} {playerCount === 1 ? "player" : "players"}
+            </Text>
+            <Text className="text-text-primary text-2xl font-bold mt-1">{teamName}</Text>
+          </View>
+          <View className="mt-1">
+            <Logo size={32} />
+          </View>
         </View>
 
-        {/* Total Outstanding Card */}
-        <View className="mx-4 mt-3 mb-5 bg-indigo-900/40 rounded-2xl px-5 py-4">
-          <Text className="text-indigo-300 text-xs font-semibold uppercase tracking-widest mb-1">
-            Total Outstanding
+        {/* Total Outstanding */}
+        <View className="mx-5 mt-4 mb-6 bg-card rounded-2xl px-5 py-5 border border-border" style={styles.card}>
+          <Text className="text-text-muted text-xs font-medium uppercase tracking-widest">
+            Outstanding
           </Text>
-          <Text className="text-white text-4xl font-bold">
+          <Text
+            className="text-primary text-3xl font-bold mt-1"
+            selectable
+            style={styles.amount}
+          >
             {formatAmount(totalOutstanding, currency)}
           </Text>
         </View>
 
         {hasFines ? (
           <>
-            {/* Leaderboard Section */}
-            <View className="px-4 mb-5">
-              <Text className="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-2">
+            {/* Leaderboard */}
+            <View className="px-5 mb-6">
+              <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mb-1">
                 Leaderboard
               </Text>
               {leaderboard.map((entry, index) => (
@@ -112,15 +127,15 @@ export default function HomeScreen() {
                   rank={index + 1}
                   name={entry.memberName}
                   total={formatAmount(entry.total, currency)}
-                  onPress={() => router.push(`/player/${entry.memberId}`)}
+                  href={`/player/${entry.memberId}`}
                 />
               ))}
             </View>
 
-            {/* Recent Activity Section */}
-            <View className="px-4">
-              <Text className="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-2">
-                Recent Activity
+            {/* Recent Activity */}
+            <View className="px-5">
+              <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mb-1">
+                Recent
               </Text>
               {recentActivity.map((entry) => (
                 <FineActivityItem
@@ -134,10 +149,13 @@ export default function HomeScreen() {
             </View>
           </>
         ) : (
-          /* Empty State */
-          <View className="flex-1 items-center justify-center px-4 py-16">
-            <Text className="text-gray-500 text-base text-center">
-              No fines yet.{"\n"}Tap + to add the first one.
+          <View className="items-center px-5 py-20">
+            <TrendingUp size={40} color="#8b8fa3" strokeWidth={1.5} />
+            <Text className="text-text-secondary text-base font-medium mt-4">
+              No fines yet
+            </Text>
+            <Text className="text-text-muted text-sm mt-1 text-center">
+              Tap the + button to record the first one
             </Text>
           </View>
         )}
@@ -145,18 +163,31 @@ export default function HomeScreen() {
 
       {/* FAB */}
       <Pressable
-        onPress={() => router.push("/add-fine")}
-        className="absolute bottom-6 right-6 bg-indigo-600 w-14 h-14 rounded-full items-center justify-center"
-        style={{
-          shadowColor: "#5b5bf7",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.4,
-          shadowRadius: 16,
-          elevation: 8,
+        onPress={() => {
+          if (process.env.EXPO_OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          router.push("/add-fine");
         }}
+        accessibilityRole="button"
+        accessibilityLabel="Add fine"
+        className="absolute right-5 bg-primary w-14 h-14 rounded-full items-center justify-center active:opacity-80"
+        style={[styles.fab, { bottom: insets.bottom + 70 }]}
       >
-        <Text className="text-white text-3xl font-light leading-none" style={{ marginTop: -2 }}>+</Text>
+        <Plus size={24} color="#0f0f14" strokeWidth={2.5} />
       </Pressable>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  scrollContent: { paddingBottom: 100 },
+  card: { borderCurve: "continuous" },
+  amount: { fontVariant: ["tabular-nums"] },
+  fab: {
+    borderCurve: "continuous",
+    shadowColor: "#f59e0b",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+});

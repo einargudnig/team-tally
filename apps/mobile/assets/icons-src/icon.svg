@@ -1,0 +1,23 @@
+<!--
+  iOS app icon — 1024x1024.
+  Full-bleed amber background (iOS applies its own rounding).
+  Mountain-profile comb glyph centered in the canvas.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- background -->
+  <rect width="1024" height="1024" fill="#f59e0b"/>
+
+  <!-- rail (shifted +85 for optical centering — centroid at 34% from mark top) -->
+  <rect x="208" y="333" width="608" height="72" rx="28" fill="#0f0f14"/>
+
+  <!-- tooth 1 (short) -->
+  <rect x="212" y="405" width="56" height="256" rx="28" fill="#0f0f14"/>
+  <!-- tooth 2 (medium) -->
+  <rect x="348" y="405" width="56" height="352" rx="28" fill="#0f0f14"/>
+  <!-- tooth 3 (tallest — T stem) -->
+  <rect x="484" y="405" width="56" height="448" rx="28" fill="#0f0f14"/>
+  <!-- tooth 4 (medium) -->
+  <rect x="620" y="405" width="56" height="352" rx="28" fill="#0f0f14"/>
+  <!-- tooth 5 (short) -->
+  <rect x="756" y="405" width="56" height="256" rx="28" fill="#0f0f14"/>
+</svg>
