@@ -14,7 +14,7 @@
 
 export type RoadmapStatus = "next" | "planned" | "exploring";
 
-export interface RoadmapItem {
+interface RoadmapItem {
   title: string;
   description: string;
   status: RoadmapStatus;
@@ -53,8 +53,7 @@ export const roadmap: RoadmapItem[] = [
   },
   {
     title: "Share & brag",
-    description:
-      "Export leaderboard cards for the team WhatsApp group. Public shame, optimized.",
+    description: "Export leaderboard cards for the team WhatsApp group. Public shame, optimized.",
     status: "exploring",
     icon: "📣",
   },

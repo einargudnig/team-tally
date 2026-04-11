@@ -23,21 +23,14 @@ const CUT = "#0f0f14";
  * Same proportions as the Astro `ChipCombMountain.astro` component and the
  * source SVG in `assets/icons-src/`. If you edit this, edit the others too.
  */
-export function Logo({
-  size = 32,
-  color = CHIP,
-  cutColor = CUT,
-  glyphOnly = false,
-}: LogoProps) {
+export function Logo({ size = 32, color = CHIP, cutColor = CUT, glyphOnly = false }: LogoProps) {
   // In glyph-only mode, draw the comb in the chip color on transparent.
   const chipFill = glyphOnly ? "transparent" : color;
   const markFill = glyphOnly ? color : cutColor;
 
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32">
-      {!glyphOnly && (
-        <Rect x={2} y={2} width={28} height={28} rx={7} fill={chipFill} />
-      )}
+      {!glyphOnly && <Rect x={2} y={2} width={28} height={28} rx={7} fill={chipFill} />}
       {/* rail (shifted +2 for optical centering) */}
       <Rect x={5.5} y={10} width={21} height={2.5} rx={1} fill={markFill} />
       {/* tooth 1 — short */}

@@ -11,10 +11,13 @@ interface LeaderboardItemProps {
 
 export function LeaderboardItem({ rank, name, total, href }: LeaderboardItemProps) {
   const rankColor =
-    rank === 1 ? "text-primary" :
-    rank === 2 ? "text-text-secondary" :
-    rank === 3 ? "text-primary-dim" :
-    "text-text-muted";
+    rank === 1
+      ? "text-primary"
+      : rank === 2
+        ? "text-text-secondary"
+        : rank === 3
+          ? "text-primary-dim"
+          : "text-text-muted";
 
   return (
     <Link href={href as any} asChild>

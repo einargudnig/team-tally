@@ -1,0 +1,32 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignore": [".agents/**", ".claude/**", ".pi/**", ".windsurf/**", "skills/**"],
+  "workspaces": {
+    "apps/web": {
+      "entry": [
+        "src/pages/**/*.{astro,ts,tsx}",
+        "src/layouts/**/*.astro",
+        "src/components/Roadmap.astro"
+      ],
+      "project": ["src/**/*.{ts,tsx}"]
+    },
+    "apps/mobile": {
+      "metro": false,
+      "entry": ["app/**/*.{ts,tsx}", "babel.config.js", "scripts/**/*.ts"],
+      "project": [
+        "app/**/*.{ts,tsx}",
+        "components/**/*.{ts,tsx}",
+        "lib/**/*.{ts,tsx}",
+        "db/**/*.{ts,tsx}"
+      ],
+      "ignoreDependencies": [
+        "@react-navigation/native",
+        "react-native-css-interop",
+        "drizzle-kit",
+        "expo-updates",
+        "expo-system-ui",
+        "babel-preset-expo"
+      ]
+    }
+  }
+}

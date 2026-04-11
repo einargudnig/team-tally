@@ -70,9 +70,9 @@ const features = [
           The fine tracker that <span class="accent">your team</span> will actually use.
         </h1>
         <p class="lede">
-          Record fines, settle the kitty, and see who's really leading the dressing room
-          table. Team Tally turns the oldest football tradition into a slick mobile app
-          — no spreadsheets, no arguments, no excuses.
+          Record fines, settle the kitty, and see who's really leading the dressing room table. Team
+          Tally turns the oldest football tradition into a slick mobile app — no spreadsheets, no
+          arguments, no excuses.
         </p>
         <div class="cta-row">
           <a href="#waitlist" class="btn btn-primary">Join the waitlist</a>
@@ -97,18 +97,22 @@ const features = [
       <p class="eyebrow">Everything your treasurer needs</p>
       <h2>Built for the way teams actually work</h2>
       <p class="section-lede">
-        No setup wizard. No onboarding friction. Just open the app, add a few players,
-        and start fining.
+        No setup wizard. No onboarding friction. Just open the app, add a few players, and start
+        fining.
       </p>
     </div>
     <div class="feat-grid">
-      {features.map((f) => (
-        <article class="feat-card">
-          <span class="feat-icon" aria-hidden="true">{f.icon}</span>
-          <h3>{f.title}</h3>
-          <p>{f.body}</p>
-        </article>
-      ))}
+      {
+        features.map((f) => (
+          <article class="feat-card">
+            <span class="feat-icon" aria-hidden="true">
+              {f.icon}
+            </span>
+            <h3>{f.title}</h3>
+            <p>{f.body}</p>
+          </article>
+        ))
+      }
     </div>
   </section>
 
@@ -123,8 +127,8 @@ const features = [
         </p>
         <h2>Be first on the pitch.</h2>
         <p>
-          Team Tally is launching for iOS and Android soon.
-          Drop your email and we'll ping you the moment it's live.
+          Team Tally is launching for iOS and Android soon. Drop your email and we'll ping you the
+          moment it's live.
         </p>
         <a
           href="mailto:hello@team-tally.app?subject=Team%20Tally%20waitlist&body=Add%20me%20to%20the%20waitlist."
@@ -175,9 +179,19 @@ const features = [
       display: inline-flex;
       align-items: center;
     }
-    .nav nav { display: flex; gap: 28px; align-items: center; font-size: 14px; }
-    .nav nav a { color: var(--text-secondary); transition: color 0.15s; }
-    .nav nav a:hover { color: var(--text-primary); }
+    .nav nav {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      font-size: 14px;
+    }
+    .nav nav a {
+      color: var(--text-secondary);
+      transition: color 0.15s;
+    }
+    .nav nav a:hover {
+      color: var(--text-primary);
+    }
     .nav-cta {
       background: var(--primary);
       color: var(--surface) !important;
@@ -185,7 +199,9 @@ const features = [
       border-radius: 999px;
       font-weight: 600;
     }
-    .nav-cta:hover { background: var(--primary-light); }
+    .nav-cta:hover {
+      background: var(--primary-light);
+    }
 
     /* HERO */
     .hero {
@@ -235,17 +251,22 @@ const features = [
       animation: pulse-dot 2s ease-in-out infinite;
     }
     @keyframes pulse-dot {
-      0%, 100% {
-        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6),
-                    0 0 0 4px rgba(245, 158, 11, 0.15);
+      0%,
+      100% {
+        box-shadow:
+          0 0 0 0 rgba(245, 158, 11, 0.6),
+          0 0 0 4px rgba(245, 158, 11, 0.15);
       }
       50% {
-        box-shadow: 0 0 0 8px rgba(245, 158, 11, 0),
-                    0 0 0 4px rgba(245, 158, 11, 0.15);
+        box-shadow:
+          0 0 0 8px rgba(245, 158, 11, 0),
+          0 0 0 4px rgba(245, 158, 11, 0.15);
       }
     }
     @media (prefers-reduced-motion: reduce) {
-      .dot-live { animation: none; }
+      .dot-live {
+        animation: none;
+      }
     }
     h1 {
       font-size: clamp(40px, 5.5vw, 68px);
@@ -296,7 +317,10 @@ const features = [
       color: var(--text-primary);
       border-color: var(--border);
     }
-    .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-ghost:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
     .trust {
       display: flex;
       gap: 20px;
@@ -306,7 +330,10 @@ const features = [
       flex-wrap: wrap;
     }
 
-    .hero-visual { display: flex; justify-content: center; }
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+    }
 
     /* FEATURES */
     .features {
@@ -383,7 +410,9 @@ const features = [
       max-width: 580px;
       margin: 0 auto 60px;
     }
-    .footer-cta h2 { margin-bottom: 12px; }
+    .footer-cta h2 {
+      margin-bottom: 12px;
+    }
     .footer-cta p {
       color: var(--text-secondary);
       font-size: 17px;
@@ -424,14 +453,35 @@ const features = [
 
     /* RESPONSIVE */
     @media (max-width: 860px) {
-      .hero { padding: 56px 20px 72px; }
-      .hero-grid { grid-template-columns: 1fr; gap: 48px; text-align: center; }
-      .eyebrow, .cta-row, .trust { justify-content: center; }
-      .lede { margin-left: auto; margin-right: auto; }
-      .nav nav { gap: 16px; }
-      .nav nav a:not(.nav-cta) { display: none; }
-      .features { padding: 56px 20px; }
-      .footer-inner { padding: 56px 20px 32px; }
+      .hero {
+        padding: 56px 20px 72px;
+      }
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 48px;
+        text-align: center;
+      }
+      .eyebrow,
+      .cta-row,
+      .trust {
+        justify-content: center;
+      }
+      .lede {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .nav nav {
+        gap: 16px;
+      }
+      .nav nav a:not(.nav-cta) {
+        display: none;
+      }
+      .features {
+        padding: 56px 20px;
+      }
+      .footer-inner {
+        padding: 56px 20px 32px;
+      }
     }
   </style>
 </Base>

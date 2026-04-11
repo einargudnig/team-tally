@@ -17,6 +17,7 @@
 ### Task 1: Scaffold Expo App
 
 **Files:**
+
 - Create: `apps/mobile/` (entire Expo project via `create-expo-app`)
 - Modify: `package.json` (root — add dev:mobile script)
 
@@ -39,6 +40,7 @@ Expected: Metro bundler starts, QR code shown. Press `i` for iOS simulator or `a
 - [ ] **Step 3: Clean up template boilerplate**
 
 Remove the template's example screens and components. We'll replace them with our own. Delete:
+
 - `apps/mobile/app/(tabs)/index.tsx` (replace with our dashboard)
 - `apps/mobile/app/(tabs)/explore.tsx` (not needed)
 - `apps/mobile/components/` (all template components)
@@ -47,6 +49,7 @@ Remove the template's example screens and components. We'll replace them with ou
 - `apps/mobile/assets/images/` (template images, keep `assets/` dir)
 
 Keep:
+
 - `apps/mobile/app/_layout.tsx` (we'll modify it)
 - `apps/mobile/app/(tabs)/_layout.tsx` (we'll modify it)
 - `apps/mobile/app.json`
@@ -75,6 +78,7 @@ git commit -m "chore: scaffold Expo app with tabs template"
 ### Task 2: Set Up NativeWind (Tailwind for React Native)
 
 **Files:**
+
 - Modify: `apps/mobile/package.json`
 - Create: `apps/mobile/metro.config.js`
 - Create: `apps/mobile/postcss.config.mjs`
@@ -151,6 +155,7 @@ git commit -m "chore: set up NativeWind v5 with Tailwind CSS"
 ### Task 3: Database Schema and Client
 
 **Files:**
+
 - Create: `apps/mobile/db/schema.ts`
 - Create: `apps/mobile/db/client.ts`
 - Modify: `apps/mobile/package.json` (add drizzle deps)
@@ -237,6 +242,7 @@ git commit -m "feat: add SQLite database schema and client"
 ### Task 4: Database Query Functions
 
 **Files:**
+
 - Create: `apps/mobile/db/queries.ts`
 
 - [ ] **Step 1: Create query functions**
@@ -335,11 +341,7 @@ export async function deleteFineType(id: string) {
 
 // === Fine Entries ===
 
-export async function createFineEntry(
-  fineTypeId: string,
-  memberId: string,
-  date: string
-) {
+export async function createFineEntry(fineTypeId: string, memberId: string, date: string) {
   const id = uuid();
   await db.insert(fineEntries).values({
     id,
@@ -472,6 +474,7 @@ git commit -m "feat: add database query functions"
 ### Task 5: Currency Utilities
 
 **Files:**
+
 - Create: `apps/mobile/lib/currency.ts`
 
 - [ ] **Step 1: Create currency module**
@@ -534,6 +537,7 @@ git commit -m "feat: add currency utilities and formatting"
 ### Task 6: Root Layout and Onboarding Router
 
 **Files:**
+
 - Modify: `apps/mobile/app/_layout.tsx`
 - Create: `apps/mobile/app/onboarding/_layout.tsx`
 - Create: `apps/mobile/app/onboarding/index.tsx`
@@ -631,14 +635,7 @@ Create `apps/mobile/app/onboarding/index.tsx`:
 
 ```tsx
 import { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ScrollView,
-  KeyboardAvoidingView,
-} from "react-native";
+import { View, Text, TextInput, Pressable, ScrollView, KeyboardAvoidingView } from "react-native";
 import { useRouter } from "expo-router";
 import { createTeam } from "../../db/queries";
 import { currencies } from "../../lib/currency";
@@ -666,12 +663,8 @@ export default function OnboardingScreen() {
       >
         <View className="items-center mb-8">
           <Text className="text-5xl mb-4">⚽</Text>
-          <Text className="text-white text-2xl font-bold mb-2">
-            What's your team called?
-          </Text>
-          <Text className="text-gray-500 text-sm">
-            You can always change this later
-          </Text>
+          <Text className="text-white text-2xl font-bold mb-2">What's your team called?</Text>
+          <Text className="text-gray-500 text-sm">You can always change this later</Text>
         </View>
 
         <TextInput
@@ -756,6 +749,7 @@ git commit -m "feat: add root layout with onboarding routing"
 ### Task 7: Tab Layout
 
 **Files:**
+
 - Modify: `apps/mobile/app/(tabs)/_layout.tsx`
 - Create: `apps/mobile/app/(tabs)/index.tsx` (placeholder)
 - Create: `apps/mobile/app/(tabs)/players.tsx` (placeholder)
@@ -789,36 +783,28 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => (
-            <TabIcon name="🏠" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <TabIcon name="🏠" color={color} />,
         }}
       />
       <Tabs.Screen
         name="players"
         options={{
           title: "Players",
-          tabBarIcon: ({ color }) => (
-            <TabIcon name="👥" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <TabIcon name="👥" color={color} />,
         }}
       />
       <Tabs.Screen
         name="fines"
         options={{
           title: "Fines",
-          tabBarIcon: ({ color }) => (
-            <TabIcon name="📋" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <TabIcon name="📋" color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: "Settings",
-          tabBarIcon: ({ color }) => (
-            <TabIcon name="⚙️" color={color} />
-          ),
+          tabBarIcon: ({ color }) => <TabIcon name="⚙️" color={color} />,
         }}
       />
     </Tabs>
@@ -826,9 +812,7 @@ export default function TabLayout() {
 }
 
 function TabIcon({ name }: { name: string; color: string }) {
-  return (
-    <Text style={{ fontSize: 20 }}>{name}</Text>
-  );
+  return <Text style={{ fontSize: 20 }}>{name}</Text>;
 }
 
 import { Text } from "react-native";
@@ -839,6 +823,7 @@ import { Text } from "react-native";
 Create each tab screen with a minimal placeholder so the app compiles.
 
 `apps/mobile/app/(tabs)/index.tsx`:
+
 ```tsx
 import { View, Text } from "react-native";
 
@@ -852,6 +837,7 @@ export default function HomeScreen() {
 ```
 
 `apps/mobile/app/(tabs)/players.tsx`:
+
 ```tsx
 import { View, Text } from "react-native";
 
@@ -865,6 +851,7 @@ export default function PlayersScreen() {
 ```
 
 `apps/mobile/app/(tabs)/fines.tsx`:
+
 ```tsx
 import { View, Text } from "react-native";
 
@@ -878,6 +865,7 @@ export default function FinesScreen() {
 ```
 
 `apps/mobile/app/(tabs)/settings.tsx`:
+
 ```tsx
 import { View, Text } from "react-native";
 
@@ -906,6 +894,7 @@ git commit -m "feat: add tab layout with 4 tabs"
 ### Task 8: Players Tab (Add & List Members)
 
 **Files:**
+
 - Modify: `apps/mobile/app/(tabs)/players.tsx`
 - Create: `apps/mobile/components/player-avatar.tsx`
 
@@ -929,10 +918,7 @@ export function PlayerAvatar({ name, size = 40 }: PlayerAvatarProps) {
       className="bg-indigo-900/50 items-center justify-center rounded-full"
       style={{ width: size, height: size }}
     >
-      <Text
-        className="text-indigo-300 font-semibold"
-        style={{ fontSize: size * 0.4 }}
-      >
+      <Text className="text-indigo-300 font-semibold" style={{ fontSize: size * 0.4 }}>
         {initial}
       </Text>
     </View>
@@ -946,14 +932,7 @@ Replace `apps/mobile/app/(tabs)/players.tsx`:
 
 ```tsx
 import { useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  FlatList,
-  Alert,
-} from "react-native";
+import { View, Text, TextInput, Pressable, FlatList, Alert } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import { getTeam, getMembers, createMember, deleteMember } from "../../db/queries";
 import { PlayerAvatar } from "../../components/player-avatar";
@@ -994,21 +973,17 @@ export default function PlayersScreen() {
   }
 
   function handleDelete(member: Member) {
-    Alert.alert(
-      "Remove Player",
-      `Remove ${member.name} and all their fines?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: async () => {
-            await deleteMember(member.id);
-            await loadData();
-          },
+    Alert.alert("Remove Player", `Remove ${member.name} and all their fines?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Remove",
+        style: "destructive",
+        onPress: async () => {
+          await deleteMember(member.id);
+          await loadData();
         },
-      ]
-    );
+      },
+    ]);
   }
 
   return (
@@ -1027,9 +1002,7 @@ export default function PlayersScreen() {
         <Pressable
           onPress={handleAdd}
           disabled={!newName.trim()}
-          className={`rounded-xl px-5 py-3 ${
-            newName.trim() ? "bg-indigo-600" : "bg-gray-800"
-          }`}
+          className={`rounded-xl px-5 py-3 ${newName.trim() ? "bg-indigo-600" : "bg-gray-800"}`}
         >
           <Text className={`font-semibold ${newName.trim() ? "text-white" : "text-gray-600"}`}>
             Add
@@ -1055,9 +1028,7 @@ export default function PlayersScreen() {
         ListEmptyComponent={
           <View className="items-center justify-center py-20">
             <Text className="text-gray-600 text-base">No players yet</Text>
-            <Text className="text-gray-700 text-sm mt-1">
-              Add your first player above
-            </Text>
+            <Text className="text-gray-700 text-sm mt-1">Add your first player above</Text>
           </View>
         }
       />
@@ -1082,6 +1053,7 @@ git commit -m "feat: add Players tab with add/list/delete"
 ### Task 9: Fines Tab (Fine Types Management)
 
 **Files:**
+
 - Modify: `apps/mobile/app/(tabs)/fines.tsx`
 
 - [ ] **Step 1: Build Fines screen**
@@ -1143,12 +1115,7 @@ export default function FinesScreen() {
     const parsedAmount = parseInt(amount, 10);
     if (!trimmedName || !parsedAmount || !teamId) return;
 
-    await createFineType(
-      teamId,
-      trimmedName,
-      parsedAmount,
-      description.trim() || undefined
-    );
+    await createFineType(teamId, trimmedName, parsedAmount, description.trim() || undefined);
     setName("");
     setDescription("");
     setAmount("");
@@ -1157,21 +1124,17 @@ export default function FinesScreen() {
   }
 
   function handleDelete(ft: FineType) {
-    Alert.alert(
-      "Delete Fine Type",
-      `Delete "${ft.name}" and all entries using it?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            await deleteFineType(ft.id);
-            await loadData();
-          },
+    Alert.alert("Delete Fine Type", `Delete "${ft.name}" and all entries using it?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          await deleteFineType(ft.id);
+          await loadData();
         },
-      ]
-    );
+      },
+    ]);
   }
 
   return (
@@ -1267,9 +1230,7 @@ export default function FinesScreen() {
         ListEmptyComponent={
           <View className="items-center justify-center py-20">
             <Text className="text-gray-600 text-base">No fine types yet</Text>
-            <Text className="text-gray-700 text-sm mt-1">
-              Add your first fine type above
-            </Text>
+            <Text className="text-gray-700 text-sm mt-1">Add your first fine type above</Text>
           </View>
         }
       />
@@ -1294,6 +1255,7 @@ git commit -m "feat: add Fines tab with fine type management"
 ### Task 10: Home Dashboard
 
 **Files:**
+
 - Modify: `apps/mobile/app/(tabs)/index.tsx`
 - Create: `apps/mobile/components/leaderboard-item.tsx`
 - Create: `apps/mobile/components/fine-activity-item.tsx`
@@ -1326,9 +1288,7 @@ export function LeaderboardItem({ rank, name, total, onPress }: LeaderboardItemP
       onPress={onPress}
       className="flex-row items-center bg-gray-900/50 rounded-xl px-3 py-3 mb-1.5"
     >
-      <Text className={`font-bold w-6 text-center ${getRankColor(rank)}`}>
-        {rank}
-      </Text>
+      <Text className={`font-bold w-6 text-center ${getRankColor(rank)}`}>{rank}</Text>
       <View className="ml-2">
         <PlayerAvatar name={name} size={32} />
       </View>
@@ -1381,12 +1341,7 @@ Replace `apps/mobile/app/(tabs)/index.tsx`:
 import { useState, useCallback } from "react";
 import { View, Text, ScrollView, Pressable } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
-import {
-  getTeam,
-  getLeaderboard,
-  getRecentActivity,
-  getTotalOutstanding,
-} from "../../db/queries";
+import { getTeam, getLeaderboard, getRecentActivity, getTotalOutstanding } from "../../db/queries";
 import { formatAmount } from "../../lib/currency";
 import { LeaderboardItem } from "../../components/leaderboard-item";
 import { FineActivityItem } from "../../components/fine-activity-item";
@@ -1487,9 +1442,7 @@ export default function HomeScreen() {
         {/* Recent Activity */}
         {recent.length > 0 && (
           <View className="mb-5">
-            <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">
-              Recent
-            </Text>
+            <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">Recent</Text>
             {recent.map((item) => (
               <FineActivityItem
                 key={item.id}
@@ -1506,9 +1459,7 @@ export default function HomeScreen() {
         {leaderboard.length === 0 && recent.length === 0 && (
           <View className="items-center py-12">
             <Text className="text-gray-600 text-base">No fines recorded yet</Text>
-            <Text className="text-gray-700 text-sm mt-1">
-              Tap + to add the first fine
-            </Text>
+            <Text className="text-gray-700 text-sm mt-1">Tap + to add the first fine</Text>
           </View>
         )}
       </ScrollView>
@@ -1548,6 +1499,7 @@ git commit -m "feat: add Home dashboard with leaderboard and activity feed"
 ### Task 11: Add Fine Modal
 
 **Files:**
+
 - Create: `apps/mobile/app/add-fine.tsx`
 - Create: `apps/mobile/components/member-chip.tsx`
 
@@ -1571,9 +1523,7 @@ export function MemberChip({ name, selected, onPress }: MemberChipProps) {
     <Pressable
       onPress={onPress}
       className={`flex-row items-center gap-2 rounded-xl px-4 py-2.5 ${
-        selected
-          ? "bg-indigo-600"
-          : "bg-gray-900 border border-gray-700"
+        selected ? "bg-indigo-600" : "bg-gray-900 border border-gray-700"
       }`}
     >
       <View
@@ -1581,19 +1531,11 @@ export function MemberChip({ name, selected, onPress }: MemberChipProps) {
           selected ? "bg-white/20" : "bg-indigo-900/50"
         }`}
       >
-        <Text
-          className={`text-xs font-semibold ${
-            selected ? "text-white" : "text-indigo-300"
-          }`}
-        >
+        <Text className={`text-xs font-semibold ${selected ? "text-white" : "text-indigo-300"}`}>
           {initial}
         </Text>
       </View>
-      <Text
-        className={`text-sm ${
-          selected ? "text-white" : "text-gray-400"
-        }`}
-      >
+      <Text className={`text-sm ${selected ? "text-white" : "text-gray-400"}`}>
         {name}
         {selected ? " ✓" : ""}
       </Text>
@@ -1608,21 +1550,10 @@ Create `apps/mobile/app/add-fine.tsx`:
 
 ```tsx
 import { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  Platform,
-} from "react-native";
+import { View, Text, Pressable, ScrollView, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useRouter } from "expo-router";
-import {
-  getTeam,
-  getMembers,
-  getFineTypes,
-  createFineEntry,
-} from "../db/queries";
+import { getTeam, getMembers, getFineTypes, createFineEntry } from "../db/queries";
 import { formatAmount } from "../lib/currency";
 import { MemberChip } from "../components/member-chip";
 
@@ -1648,10 +1579,7 @@ export default function AddFineScreen() {
     const team = await getTeam();
     if (!team) return;
     setCurrency(team.currency);
-    const [m, ft] = await Promise.all([
-      getMembers(team.id),
-      getFineTypes(team.id),
-    ]);
+    const [m, ft] = await Promise.all([getMembers(team.id), getFineTypes(team.id)]);
     setMembers(m);
     setFineTypesList(ft);
   }
@@ -1688,14 +1616,10 @@ export default function AddFineScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <Text className="text-white text-xl font-semibold mb-1">New Fine</Text>
-      <Text className="text-gray-500 text-sm mb-6">
-        Tap a player, then a fine
-      </Text>
+      <Text className="text-gray-500 text-sm mb-6">Tap a player, then a fine</Text>
 
       {/* Step 1: Who? */}
-      <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">
-        1. Who?
-      </Text>
+      <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">1. Who?</Text>
       <View className="flex-row flex-wrap gap-2 mb-5">
         {members.map((m) => (
           <MemberChip
@@ -1711,16 +1635,12 @@ export default function AddFineScreen() {
       </View>
 
       {/* Step 2: What for? */}
-      <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">
-        2. What for?
-      </Text>
+      <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">2. What for?</Text>
       <View className="gap-2 mb-5">
         {fineTypesList.map((ft) => (
           <Pressable
             key={ft.id}
-            onPress={() =>
-              setSelectedFineTypeId(ft.id === selectedFineTypeId ? null : ft.id)
-            }
+            onPress={() => setSelectedFineTypeId(ft.id === selectedFineTypeId ? null : ft.id)}
             className={`rounded-xl px-4 py-3.5 flex-row justify-between items-center ${
               ft.id === selectedFineTypeId
                 ? "bg-gray-900 border-2 border-indigo-600"
@@ -1728,9 +1648,7 @@ export default function AddFineScreen() {
             }`}
           >
             <Text
-              className={`text-sm ${
-                ft.id === selectedFineTypeId ? "text-white" : "text-gray-400"
-              }`}
+              className={`text-sm ${ft.id === selectedFineTypeId ? "text-white" : "text-gray-400"}`}
             >
               {ft.name}
             </Text>
@@ -1749,9 +1667,7 @@ export default function AddFineScreen() {
       </View>
 
       {/* Step 3: When? */}
-      <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">
-        3. When?
-      </Text>
+      <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">3. When?</Text>
       <Pressable
         onPress={() => setShowDatePicker(true)}
         className="bg-gray-900 border border-gray-700 rounded-xl px-4 py-3.5 flex-row justify-between items-center mb-6"
@@ -1778,11 +1694,7 @@ export default function AddFineScreen() {
         onPress={handleConfirm}
         disabled={!canConfirm || justAdded}
         className={`rounded-xl py-4 items-center ${
-          justAdded
-            ? "bg-green-600"
-            : canConfirm
-            ? "bg-indigo-600"
-            : "bg-gray-800"
+          justAdded ? "bg-green-600" : canConfirm ? "bg-indigo-600" : "bg-gray-800"
         }`}
       >
         <Text
@@ -1793,19 +1705,13 @@ export default function AddFineScreen() {
           {justAdded
             ? "✓ Added!"
             : canConfirm
-            ? `Fine ${selectedMember?.name} — ${formatAmount(
-                selectedFineType!.amount,
-                currency
-              )}`
-            : "Select player and fine"}
+              ? `Fine ${selectedMember?.name} — ${formatAmount(selectedFineType!.amount, currency)}`
+              : "Select player and fine"}
         </Text>
       </Pressable>
 
       {/* Close button */}
-      <Pressable
-        onPress={() => router.back()}
-        className="mt-4 py-3 items-center"
-      >
+      <Pressable onPress={() => router.back()} className="mt-4 py-3 items-center">
         <Text className="text-gray-500 text-sm">Done</Text>
       </Pressable>
     </ScrollView>
@@ -1835,6 +1741,7 @@ git commit -m "feat: add Add Fine modal with batch support"
 ### Task 12: Player Detail Screen
 
 **Files:**
+
 - Create: `apps/mobile/app/player/[id].tsx`
 
 - [ ] **Step 1: Build Player Detail screen**
@@ -1843,21 +1750,11 @@ Create `apps/mobile/app/player/[id].tsx`:
 
 ```tsx
 import { useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  SectionList,
-  Alert,
-} from "react-native";
+import { View, Text, SectionList, Alert } from "react-native";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useFocusEffect } from "expo-router";
 import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
-import {
-  getTeam,
-  getMembers,
-  getPlayerDetail,
-  deleteFineEntry,
-} from "../../db/queries";
+import { getTeam, getMembers, getPlayerDetail, deleteFineEntry } from "../../db/queries";
 import { formatAmount } from "../../lib/currency";
 import { PlayerAvatar } from "../../components/player-avatar";
 
@@ -1922,9 +1819,7 @@ export default function PlayerDetailScreen() {
         {/* Breakdown */}
         {breakdown.length > 0 && (
           <View className="px-4 mb-4">
-            <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">
-              Breakdown
-            </Text>
+            <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">Breakdown</Text>
             {breakdown.map((b) => (
               <View
                 key={b.fineTypeId}
@@ -1946,9 +1841,7 @@ export default function PlayerDetailScreen() {
 
         {/* History */}
         <View className="px-4 flex-1">
-          <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">
-            History
-          </Text>
+          <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">History</Text>
           {history.map((entry) => (
             <View
               key={entry.id}
@@ -1961,9 +1854,7 @@ export default function PlayerDetailScreen() {
             </View>
           ))}
           {history.length === 0 && (
-            <Text className="text-gray-600 text-sm text-center py-8">
-              No fines recorded
-            </Text>
+            <Text className="text-gray-600 text-sm text-center py-8">No fines recorded</Text>
           )}
         </View>
       </View>
@@ -1997,6 +1888,7 @@ git commit -m "feat: add Player Detail screen with breakdown and history"
 ### Task 13: Settings Screen
 
 **Files:**
+
 - Modify: `apps/mobile/app/(tabs)/settings.tsx`
 
 - [ ] **Step 1: Build Settings screen**
@@ -2005,14 +1897,7 @@ Replace `apps/mobile/app/(tabs)/settings.tsx`:
 
 ```tsx
 import { useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ScrollView,
-  Alert,
-} from "react-native";
+import { View, Text, TextInput, Pressable, ScrollView, Alert } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { getTeam, updateTeam } from "../../db/queries";
 import { currencies, getCurrencyInfo } from "../../lib/currency";
@@ -2051,14 +1936,9 @@ export default function SettingsScreen() {
   const currencyInfo = getCurrencyInfo(selectedCurrency);
 
   return (
-    <ScrollView
-      className="flex-1 bg-black"
-      contentContainerStyle={{ padding: 16 }}
-    >
+    <ScrollView className="flex-1 bg-black" contentContainerStyle={{ padding: 16 }}>
       {/* Team Name */}
-      <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">
-        Team Name
-      </Text>
+      <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">Team Name</Text>
       <TextInput
         className="bg-gray-900 border border-gray-700 rounded-xl px-4 py-3.5 text-white text-base mb-5"
         value={teamName}
@@ -2068,16 +1948,12 @@ export default function SettingsScreen() {
       />
 
       {/* Currency */}
-      <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">
-        Currency
-      </Text>
+      <Text className="text-gray-500 text-xs uppercase tracking-wider mb-2">Currency</Text>
       <Pressable
         onPress={() => setShowCurrencyPicker(!showCurrencyPicker)}
         className="bg-gray-900 border border-gray-700 rounded-xl px-4 py-3.5 flex-row justify-between items-center mb-2"
       >
-        <Text className="text-white text-base">
-          {currencyInfo.name}
-        </Text>
+        <Text className="text-white text-base">{currencyInfo.name}</Text>
         <Text className="text-gray-400">
           {currencyInfo.code} {currencyInfo.symbol}
         </Text>
@@ -2109,9 +1985,7 @@ export default function SettingsScreen() {
       {/* Save */}
       <Pressable
         onPress={handleSave}
-        className={`rounded-xl py-4 items-center mt-4 ${
-          saved ? "bg-green-600" : "bg-indigo-600"
-        }`}
+        className={`rounded-xl py-4 items-center mt-4 ${saved ? "bg-green-600" : "bg-indigo-600"}`}
       >
         <Text className="text-white text-base font-semibold">
           {saved ? "✓ Saved" : "Save Changes"}
@@ -2138,6 +2012,7 @@ git commit -m "feat: add Settings screen with team name and currency editing"
 ### Task 14: Final Integration and Polish
 
 **Files:**
+
 - Modify: `apps/mobile/app/_layout.tsx` (if needed)
 - Modify: `apps/mobile/app.json` (app name, scheme)
 - Modify: `.gitignore` (add .superpowers/)
@@ -2169,6 +2044,7 @@ Append to root `.gitignore`:
 - [ ] **Step 3: Full flow test**
 
 Test the complete flow end-to-end:
+
 1. Delete the app / clear data to trigger onboarding
 2. Enter team name, select currency → Continue
 3. Add 3+ players in Players tab

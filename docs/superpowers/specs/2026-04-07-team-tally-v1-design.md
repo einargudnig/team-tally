@@ -11,43 +11,48 @@ Expo app with local SQLite storage. No backend, no accounts, no network calls. D
 Four tables in SQLite via Drizzle ORM + expo-sqlite:
 
 ### Team
-| Column    | Type    | Notes                              |
-|-----------|---------|------------------------------------|
-| id        | text    | UUID, primary key                  |
-| name      | text    | Required                           |
+
+| Column    | Type    | Notes                             |
+| --------- | ------- | --------------------------------- |
+| id        | text    | UUID, primary key                 |
+| name      | text    | Required                          |
 | currency  | text    | ISO 4217 code (e.g. "ISK", "EUR") |
-| createdAt | integer | Unix timestamp                     |
+| createdAt | integer | Unix timestamp                    |
 
 Single row in v1 (one team per device). Schema supports multiple for future.
 
 ### Member
-| Column    | Type    | Notes              |
-|-----------|---------|--------------------|
-| id        | text    | UUID, primary key  |
-| teamId    | text    | FK → Team.id       |
-| name      | text    | Required           |
-| createdAt | integer | Unix timestamp     |
+
+| Column    | Type    | Notes             |
+| --------- | ------- | ----------------- |
+| id        | text    | UUID, primary key |
+| teamId    | text    | FK → Team.id      |
+| name      | text    | Required          |
+| createdAt | integer | Unix timestamp    |
 
 ### FineType
-| Column      | Type    | Notes                              |
-|-------------|---------|------------------------------------|
-| id          | text    | UUID, primary key                  |
-| teamId      | text    | FK → Team.id                       |
-| name        | text    | Required                           |
-| description | text    | Optional                           |
-| amount      | integer | In smallest currency unit, fixed   |
-| createdAt   | integer | Unix timestamp                     |
+
+| Column      | Type    | Notes                            |
+| ----------- | ------- | -------------------------------- |
+| id          | text    | UUID, primary key                |
+| teamId      | text    | FK → Team.id                     |
+| name        | text    | Required                         |
+| description | text    | Optional                         |
+| amount      | integer | In smallest currency unit, fixed |
+| createdAt   | integer | Unix timestamp                   |
 
 ### FineEntry
-| Column     | Type    | Notes                          |
-|------------|---------|--------------------------------|
-| id         | text    | UUID, primary key              |
-| fineTypeId | text    | FK → FineType.id               |
-| memberId   | text    | FK → Member.id                 |
-| date       | text    | ISO date string (YYYY-MM-DD)   |
-| createdAt  | integer | Unix timestamp                 |
+
+| Column     | Type    | Notes                        |
+| ---------- | ------- | ---------------------------- |
+| id         | text    | UUID, primary key            |
+| fineTypeId | text    | FK → FineType.id             |
+| memberId   | text    | FK → Member.id               |
+| date       | text    | ISO date string (YYYY-MM-DD) |
+| createdAt  | integer | Unix timestamp               |
 
 ### Key Queries
+
 - **Leaderboard**: Group FineEntries by memberId, join FineType for amount, sum per member, order descending.
 - **Recent activity**: FineEntries ordered by date desc, join FineType (name, amount) and Member (name).
 - **Player detail breakdown**: FineEntries for a member, grouped by fineTypeId with count and total.
@@ -92,6 +97,7 @@ Onboarding state tracked by whether a Team row exists in the database. Root layo
 ### Add Fine Flow (modal/sheet from FAB)
 
 All on a single screen:
+
 1. **Who?** — Tap to select a member (chip/pill UI, single select).
 2. **What for?** — Tap to select a fine type from the list.
 3. **When?** — Date picker, defaults to today.

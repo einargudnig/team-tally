@@ -1,0 +1,14 @@
+node_modules
+dist
+.astro
+.expo
+**/android
+**/ios
+bun.lock
+**/*.lock
+apps/mobile/assets
+.agents
+.claude
+.pi
+.windsurf
+skills

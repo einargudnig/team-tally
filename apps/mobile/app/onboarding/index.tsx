@@ -32,16 +32,18 @@ export default function OnboardingScreen() {
           <Text className="text-text-primary text-2xl font-bold mb-2">
             What's your team called?
           </Text>
-          <Text className="text-text-muted text-sm">
-            You can always change this later
-          </Text>
+          <Text className="text-text-muted text-sm">You can always change this later</Text>
         </View>
 
         <TextInput
           className="bg-card border border-border rounded-xl px-4 min-h-[44px] text-text-primary text-base mb-4"
           style={styles.card}
-          placeholder="Team name" placeholderTextColor="#6b7280"
-          value={teamName} onChangeText={setTeamName} autoFocus returnKeyType="next"
+          placeholder="Team name"
+          placeholderTextColor="#6b7280"
+          value={teamName}
+          onChangeText={setTeamName}
+          autoFocus
+          returnKeyType="next"
         />
 
         <Pressable
@@ -52,21 +54,31 @@ export default function OnboardingScreen() {
           style={styles.card}
         >
           <Text className="text-text-secondary text-sm">Currency</Text>
-          <Text className="text-text-primary text-base">{selectedInfo.code} {selectedInfo.symbol}</Text>
+          <Text className="text-text-primary text-base">
+            {selectedInfo.code} {selectedInfo.symbol}
+          </Text>
         </Pressable>
 
         {showCurrencyPicker && (
-          <View className="bg-card border border-border rounded-xl mb-4 max-h-48 overflow-hidden" style={styles.card}>
+          <View
+            className="bg-card border border-border rounded-xl mb-4 max-h-48 overflow-hidden"
+            style={styles.card}
+          >
             <ScrollView nestedScrollEnabled>
               {currencies.map((c) => (
                 <Pressable
                   key={c.code}
-                  onPress={() => { setSelectedCurrency(c.code); setShowCurrencyPicker(false); }}
+                  onPress={() => {
+                    setSelectedCurrency(c.code);
+                    setShowCurrencyPicker(false);
+                  }}
                   className={`px-4 min-h-[44px] justify-center border-b border-border ${
                     c.code === selectedCurrency ? "bg-primary-muted" : ""
                   }`}
                 >
-                  <Text className={`text-base ${c.code === selectedCurrency ? "text-primary" : "text-text-primary"}`}>
+                  <Text
+                    className={`text-base ${c.code === selectedCurrency ? "text-primary" : "text-text-primary"}`}
+                  >
                     {c.symbol} — {c.name} ({c.code})
                   </Text>
                 </Pressable>
@@ -85,7 +97,9 @@ export default function OnboardingScreen() {
           }`}
           style={styles.card}
         >
-          <Text className={`text-base font-semibold ${teamName.trim() ? "text-surface" : "text-text-muted"}`}>
+          <Text
+            className={`text-base font-semibold ${teamName.trim() ? "text-surface" : "text-text-muted"}`}
+          >
             Continue
           </Text>
         </Pressable>
