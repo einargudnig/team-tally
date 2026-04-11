@@ -16,9 +16,7 @@ export function MemberChip({ name, selected, onPress }: MemberChipProps) {
       accessibilityState={{ selected }}
       accessibilityLabel={`${name}${selected ? ", selected" : ""}`}
       className={`flex-row items-center gap-2 rounded-full min-h-[44px] px-4 py-2.5 active:opacity-70 ${
-        selected
-          ? "bg-primary"
-          : "bg-card border border-border"
+        selected ? "bg-primary" : "bg-card border border-border"
       }`}
     >
       <View
@@ -26,19 +24,11 @@ export function MemberChip({ name, selected, onPress }: MemberChipProps) {
           selected ? "bg-surface/20" : "bg-surface"
         }`}
       >
-        <Text
-          className={`text-xs font-semibold ${
-            selected ? "text-surface" : "text-text-muted"
-          }`}
-        >
+        <Text className={`text-xs font-semibold ${selected ? "text-surface" : "text-text-muted"}`}>
           {selected ? "✓" : initial}
         </Text>
       </View>
-      <Text
-        className={`text-sm font-medium ${
-          selected ? "text-surface" : "text-text-secondary"
-        }`}
-      >
+      <Text className={`text-sm font-medium ${selected ? "text-surface" : "text-text-secondary"}`}>
         {name}
       </Text>
     </Pressable>

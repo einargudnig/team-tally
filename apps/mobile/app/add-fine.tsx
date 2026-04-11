@@ -9,7 +9,14 @@ import { formatAmount } from "@/lib/currency";
 import { MemberChip } from "@/components/member-chip";
 
 type Member = { id: string; teamId: string; name: string; createdAt: Date };
-type FineType = { id: string; teamId: string; name: string; description: string | null; amount: number; createdAt: Date };
+type FineType = {
+  id: string;
+  teamId: string;
+  name: string;
+  description: string | null;
+  amount: number;
+  createdAt: Date;
+};
 
 export default function AddFineScreen() {
   const router = useRouter();
@@ -29,7 +36,9 @@ export default function AddFineScreen() {
     setCurrency(team.currency);
     setMembers(getMembers(team.id));
     setFineTypesList(getFineTypes(team.id));
-    return () => { if (addedTimer.current) clearTimeout(addedTimer.current); };
+    return () => {
+      if (addedTimer.current) clearTimeout(addedTimer.current);
+    };
   }, []);
 
   const selectedMember = members.find((m) => m.id === selectedMemberId);
@@ -40,7 +49,8 @@ export default function AddFineScreen() {
     if (!selectedMemberId || !selectedFineTypeId) return;
     const dateStr = date.toISOString().slice(0, 10);
     createFineEntry(selectedFineTypeId, selectedMemberId, dateStr);
-    if (process.env.EXPO_OS === "ios") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (process.env.EXPO_OS === "ios")
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setJustAdded(true);
     addedTimer.current = setTimeout(() => {
       setJustAdded(false);
@@ -86,7 +96,9 @@ export default function AddFineScreen() {
                   key={member.id}
                   name={member.name}
                   selected={member.id === selectedMemberId}
-                  onPress={() => setSelectedMemberId(member.id === selectedMemberId ? null : member.id)}
+                  onPress={() =>
+                    setSelectedMemberId(member.id === selectedMemberId ? null : member.id)
+                  }
                 />
               ))}
             </View>
@@ -107,7 +119,9 @@ export default function AddFineScreen() {
                 return (
                   <Pressable
                     key={ft.id}
-                    onPress={() => setSelectedFineTypeId(ft.id === selectedFineTypeId ? null : ft.id)}
+                    onPress={() =>
+                      setSelectedFineTypeId(ft.id === selectedFineTypeId ? null : ft.id)
+                    }
                     accessibilityRole="button"
                     accessibilityState={{ selected: isSelected }}
                     accessibilityLabel={`${ft.name}, ${formatAmount(ft.amount, currency)}`}
@@ -117,11 +131,15 @@ export default function AddFineScreen() {
                     style={styles.card}
                   >
                     <View className="flex-1 mr-3">
-                      <Text className={`text-base font-medium ${isSelected ? "text-surface" : "text-text-primary"}`}>
+                      <Text
+                        className={`text-base font-medium ${isSelected ? "text-surface" : "text-text-primary"}`}
+                      >
                         {ft.name}
                       </Text>
                       {ft.description ? (
-                        <Text className={`text-sm mt-0.5 ${isSelected ? "text-surface/70" : "text-text-muted"}`}>
+                        <Text
+                          className={`text-sm mt-0.5 ${isSelected ? "text-surface/70" : "text-text-muted"}`}
+                        >
                           {ft.description}
                         </Text>
                       ) : null}
@@ -144,13 +162,18 @@ export default function AddFineScreen() {
           <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mb-3">
             When?
           </Text>
-          <View className="bg-card rounded-xl overflow-hidden border border-border" style={styles.card}>
+          <View
+            className="bg-card rounded-xl overflow-hidden border border-border"
+            style={styles.card}
+          >
             <DateTimePicker
               value={date}
               mode="date"
               display={Platform.OS === "ios" ? "inline" : "default"}
               maximumDate={new Date()}
-              onChange={(_event, selectedDate) => { if (selectedDate) setDate(selectedDate); }}
+              onChange={(_event, selectedDate) => {
+                if (selectedDate) setDate(selectedDate);
+              }}
               themeVariant="dark"
               style={{ alignSelf: "center" }}
             />
@@ -160,7 +183,10 @@ export default function AddFineScreen() {
         {/* Confirm */}
         <View className="mt-8">
           {justAdded ? (
-            <View className="bg-success rounded-2xl min-h-[48px] justify-center items-center" style={styles.card}>
+            <View
+              className="bg-success rounded-2xl min-h-[48px] justify-center items-center"
+              style={styles.card}
+            >
               <Text className="text-white text-base font-bold">Added!</Text>
             </View>
           ) : (
@@ -178,7 +204,9 @@ export default function AddFineScreen() {
               }`}
               style={styles.card}
             >
-              <Text className={`text-base font-bold ${canConfirm ? "text-surface" : "text-text-muted"}`}>
+              <Text
+                className={`text-base font-bold ${canConfirm ? "text-surface" : "text-text-muted"}`}
+              >
                 {canConfirm && selectedMember && selectedFineType
                   ? `Fine ${selectedMember.name} — ${formatAmount(selectedFineType.amount, currency)}`
                   : "Select player and fine type"}

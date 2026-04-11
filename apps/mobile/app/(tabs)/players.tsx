@@ -1,7 +1,7 @@
 import { FlatList, Alert, RefreshControl, StyleSheet } from "react-native";
 import { View, Text, TextInput, Pressable } from "react-native";
 import { useState, useCallback } from "react";
-import { useFocusEffect, useRouter, Link } from "expo-router";
+import { useFocusEffect, Link } from "expo-router";
 import { UserPlus } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { getTeam, getMembers, createMember, deleteMember } from "@/db/queries";
@@ -12,7 +12,6 @@ type Member = { id: string; teamId: string; name: string; createdAt: Date };
 const ITEM_HEIGHT = 52;
 
 export default function PlayersScreen() {
-  const router = useRouter();
   const [teamId, setTeamId] = useState<string | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [newName, setNewName] = useState("");
@@ -41,52 +40,56 @@ export default function PlayersScreen() {
     const trimmed = newName.trim();
     if (!trimmed || !teamId) return;
     createMember(teamId, trimmed);
-    if (process.env.EXPO_OS === "ios") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (process.env.EXPO_OS === "ios")
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setNewName("");
     loadData();
   }
 
   function handleLongPress(member: Member) {
     if (process.env.EXPO_OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    Alert.alert(
-      "Delete Player",
-      `Remove ${member.name} and all their fines?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => {
-            deleteMember(member.id);
-            if (process.env.EXPO_OS === "ios") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-            loadData();
-          },
+    Alert.alert("Delete Player", `Remove ${member.name} and all their fines?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => {
+          deleteMember(member.id);
+          if (process.env.EXPO_OS === "ios")
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+          loadData();
         },
-      ]
-    );
+      },
+    ]);
   }
 
-  const renderItem = useCallback(({ item }: { item: Member }) => (
-    <Link href={`/player/${item.id}` as any} asChild>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`${item.name}, view details`}
-        accessibilityHint="Long press to delete"
-        className="flex-row items-center gap-3 px-5 min-h-[52px] border-b border-border active:opacity-70"
-        onLongPress={() => handleLongPress(item)}
-      >
-        <PlayerAvatar name={item.name} size={36} />
-        <Text className="text-text-primary text-base flex-1">{item.name}</Text>
-        <Text className="text-text-muted text-lg">›</Text>
-      </Pressable>
-    </Link>
-  ), []);
+  const renderItem = useCallback(
+    ({ item }: { item: Member }) => (
+      <Link href={`/player/${item.id}` as any} asChild>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`${item.name}, view details`}
+          accessibilityHint="Long press to delete"
+          className="flex-row items-center gap-3 px-5 min-h-[52px] border-b border-border active:opacity-70"
+          onLongPress={() => handleLongPress(item)}
+        >
+          <PlayerAvatar name={item.name} size={36} />
+          <Text className="text-text-primary text-base flex-1">{item.name}</Text>
+          <Text className="text-text-muted text-lg">›</Text>
+        </Pressable>
+      </Link>
+    ),
+    []
+  );
 
-  const getItemLayout = useCallback((_: any, index: number) => ({
-    length: ITEM_HEIGHT,
-    offset: ITEM_HEIGHT * index,
-    index,
-  }), []);
+  const getItemLayout = useCallback(
+    (_: any, index: number) => ({
+      length: ITEM_HEIGHT,
+      offset: ITEM_HEIGHT * index,
+      index,
+    }),
+    []
+  );
 
   return (
     <View className="flex-1 bg-surface">
@@ -127,12 +130,8 @@ export default function PlayersScreen() {
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center">
             <UserPlus size={40} color="#8b8fa3" strokeWidth={1.5} />
-            <Text className="text-text-secondary text-base font-medium mt-4">
-              No players yet
-            </Text>
-            <Text className="text-text-muted text-sm mt-1">
-              Add your first player above
-            </Text>
+            <Text className="text-text-secondary text-base font-medium mt-4">No players yet</Text>
+            <Text className="text-text-muted text-sm mt-1">Add your first player above</Text>
           </View>
         }
       />

@@ -16,12 +16,14 @@ export function getTeam() {
 
 export function createTeam(name: string, currency: string) {
   const id = uuid();
-  db.insert(teams).values({
-    id,
-    name,
-    currency,
-    createdAt: new Date(),
-  }).run();
+  db.insert(teams)
+    .values({
+      id,
+      name,
+      currency,
+      createdAt: new Date(),
+    })
+    .run();
   return id;
 }
 
@@ -37,12 +39,14 @@ export function getMembers(teamId: string) {
 
 export function createMember(teamId: string, name: string) {
   const id = uuid();
-  db.insert(members).values({
-    id,
-    teamId,
-    name,
-    createdAt: new Date(),
-  }).run();
+  db.insert(members)
+    .values({
+      id,
+      teamId,
+      name,
+      createdAt: new Date(),
+    })
+    .run();
   return id;
 }
 
@@ -57,29 +61,19 @@ export function getFineTypes(teamId: string) {
   return db.select().from(fineTypes).where(eq(fineTypes.teamId, teamId)).all();
 }
 
-export function createFineType(
-  teamId: string,
-  name: string,
-  amount: number,
-  description?: string
-) {
+export function createFineType(teamId: string, name: string, amount: number, description?: string) {
   const id = uuid();
-  db.insert(fineTypes).values({
-    id,
-    teamId,
-    name,
-    description: description ?? null,
-    amount,
-    createdAt: new Date(),
-  }).run();
+  db.insert(fineTypes)
+    .values({
+      id,
+      teamId,
+      name,
+      description: description ?? null,
+      amount,
+      createdAt: new Date(),
+    })
+    .run();
   return id;
-}
-
-export function updateFineType(
-  id: string,
-  data: { name?: string; amount?: number; description?: string | null }
-) {
-  db.update(fineTypes).set(data).where(eq(fineTypes.id, id)).run();
 }
 
 export function deleteFineType(id: string) {
@@ -89,19 +83,17 @@ export function deleteFineType(id: string) {
 
 // === Fine Entries ===
 
-export function createFineEntry(
-  fineTypeId: string,
-  memberId: string,
-  date: string
-) {
+export function createFineEntry(fineTypeId: string, memberId: string, date: string) {
   const id = uuid();
-  db.insert(fineEntries).values({
-    id,
-    fineTypeId,
-    memberId,
-    date,
-    createdAt: new Date(),
-  }).run();
+  db.insert(fineEntries)
+    .values({
+      id,
+      fineTypeId,
+      memberId,
+      date,
+      createdAt: new Date(),
+    })
+    .run();
   return id;
 }
 

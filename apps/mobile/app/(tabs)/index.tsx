@@ -4,7 +4,13 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Plus, TrendingUp } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
-import { getTeam, getLeaderboard, getRecentActivity, getTotalOutstanding, getMembers } from "@/db/queries";
+import {
+  getTeam,
+  getLeaderboard,
+  getRecentActivity,
+  getTotalOutstanding,
+  getMembers,
+} from "@/db/queries";
 import { formatAmount } from "@/lib/currency";
 import { LeaderboardItem } from "@/components/leaderboard-item";
 import { FineActivityItem } from "@/components/fine-activity-item";
@@ -20,7 +26,13 @@ function formatRelativeDate(dateStr: string): string {
 }
 
 type LeaderboardEntry = { memberId: string; memberName: string; total: number };
-type ActivityEntry = { id: string; memberName: string; fineTypeName: string; amount: number; date: string };
+type ActivityEntry = {
+  id: string;
+  memberName: string;
+  fineTypeName: string;
+  amount: number;
+  date: string;
+};
 type HomeData = {
   teamName: string;
   currency: string;
@@ -101,15 +113,14 @@ export default function HomeScreen() {
         </View>
 
         {/* Total Outstanding */}
-        <View className="mx-5 mt-4 mb-6 bg-card rounded-2xl px-5 py-5 border border-border" style={styles.card}>
+        <View
+          className="mx-5 mt-4 mb-6 bg-card rounded-2xl px-5 py-5 border border-border"
+          style={styles.card}
+        >
           <Text className="text-text-muted text-xs font-medium uppercase tracking-widest">
             Outstanding
           </Text>
-          <Text
-            className="text-primary text-3xl font-bold mt-1"
-            selectable
-            style={styles.amount}
-          >
+          <Text className="text-primary text-3xl font-bold mt-1" selectable style={styles.amount}>
             {formatAmount(totalOutstanding, currency)}
           </Text>
         </View>
@@ -151,9 +162,7 @@ export default function HomeScreen() {
         ) : (
           <View className="items-center px-5 py-20">
             <TrendingUp size={40} color="#8b8fa3" strokeWidth={1.5} />
-            <Text className="text-text-secondary text-base font-medium mt-4">
-              No fines yet
-            </Text>
+            <Text className="text-text-secondary text-base font-medium mt-4">No fines yet</Text>
             <Text className="text-text-muted text-sm mt-1 text-center">
               Tap the + button to record the first one
             </Text>
@@ -164,7 +173,8 @@ export default function HomeScreen() {
       {/* FAB */}
       <Pressable
         onPress={() => {
-          if (process.env.EXPO_OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          if (process.env.EXPO_OS === "ios")
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
           router.push("/add-fine");
         }}
         accessibilityRole="button"

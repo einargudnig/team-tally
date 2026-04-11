@@ -1,5 +1,12 @@
 import { useCallback, useState } from "react";
-import { FlatList, Alert, KeyboardAvoidingView, Platform, RefreshControl, StyleSheet } from "react-native";
+import {
+  FlatList,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  RefreshControl,
+  StyleSheet,
+} from "react-native";
 import { View, Text, TextInput, Pressable } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { ClipboardList } from "lucide-react-native";
@@ -7,7 +14,14 @@ import * as Haptics from "expo-haptics";
 import { getTeam, getFineTypes, createFineType, deleteFineType } from "@/db/queries";
 import { formatAmount } from "@/lib/currency";
 
-type FineType = { id: string; teamId: string; name: string; description: string | null; amount: number; createdAt: Date };
+type FineType = {
+  id: string;
+  teamId: string;
+  name: string;
+  description: string | null;
+  amount: number;
+  createdAt: Date;
+};
 
 export default function FinesScreen() {
   const [teamId, setTeamId] = useState<string | null>(null);
@@ -43,11 +57,18 @@ export default function FinesScreen() {
     if (!teamId) return;
     const trimmedName = name.trim();
     const parsedAmount = parseInt(amount, 10);
-    if (!trimmedName) { Alert.alert("Validation", "Name is required."); return; }
-    if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) { Alert.alert("Validation", "A valid amount is required."); return; }
+    if (!trimmedName) {
+      Alert.alert("Validation", "Name is required.");
+      return;
+    }
+    if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) {
+      Alert.alert("Validation", "A valid amount is required.");
+      return;
+    }
 
     createFineType(teamId, trimmedName, parsedAmount, description.trim() || undefined);
-    if (process.env.EXPO_OS === "ios") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (process.env.EXPO_OS === "ios")
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setName("");
     setDescription("");
     setAmount("");
@@ -56,7 +77,10 @@ export default function FinesScreen() {
   }
 
   function handleCancel() {
-    setName(""); setDescription(""); setAmount(""); setShowForm(false);
+    setName("");
+    setDescription("");
+    setAmount("");
+    setShowForm(false);
   }
 
   function handleLongPress(item: FineType) {
@@ -66,36 +90,45 @@ export default function FinesScreen() {
       `Delete "${item.name}"? This will also remove all fine entries using it.`,
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Delete", style: "destructive", onPress: () => { deleteFineType(item.id); loadData(); } },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            deleteFineType(item.id);
+            loadData();
+          },
+        },
       ]
     );
   }
 
-  const renderItem = useCallback(({ item }: { item: FineType }) => (
-    <Pressable
-      onLongPress={() => handleLongPress(item)}
-      accessibilityRole="button"
-      accessibilityHint="Long press to delete"
-      className="flex-row justify-between items-center min-h-[44px] py-3 border-b border-border active:opacity-70"
-    >
-      <View className="flex-1 mr-3">
-        <Text className="text-text-primary text-base">{item.name}</Text>
-        {item.description ? (
-          <Text className="text-text-muted text-sm mt-0.5">{item.description}</Text>
-        ) : null}
-      </View>
-      <Text
-        className="text-primary text-base font-semibold"
-        selectable
-        style={styles.amount}
+  const renderItem = useCallback(
+    ({ item }: { item: FineType }) => (
+      <Pressable
+        onLongPress={() => handleLongPress(item)}
+        accessibilityRole="button"
+        accessibilityHint="Long press to delete"
+        className="flex-row justify-between items-center min-h-[44px] py-3 border-b border-border active:opacity-70"
       >
-        {formatAmount(item.amount, currency)}
-      </Text>
-    </Pressable>
-  ), [currency]);
+        <View className="flex-1 mr-3">
+          <Text className="text-text-primary text-base">{item.name}</Text>
+          {item.description ? (
+            <Text className="text-text-muted text-sm mt-0.5">{item.description}</Text>
+          ) : null}
+        </View>
+        <Text className="text-primary text-base font-semibold" selectable style={styles.amount}>
+          {formatAmount(item.amount, currency)}
+        </Text>
+      </Pressable>
+    ),
+    [currency]
+  );
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <View className="flex-1 bg-surface">
         <View className="px-5 pt-3 flex-1">
           {!showForm && (
@@ -114,18 +147,26 @@ export default function FinesScreen() {
             <View className="bg-card rounded-xl p-4 mb-4 border border-border" style={styles.card}>
               <TextInput
                 className="bg-surface text-text-primary rounded-lg px-3 min-h-[44px] mb-3 text-base border border-border"
-                placeholder="Name *" placeholderTextColor="#6b7280"
-                value={name} onChangeText={setName} autoFocus
+                placeholder="Name *"
+                placeholderTextColor="#6b7280"
+                value={name}
+                onChangeText={setName}
+                autoFocus
               />
               <TextInput
                 className="bg-surface text-text-primary rounded-lg px-3 min-h-[44px] mb-3 text-base border border-border"
-                placeholder="Description (optional)" placeholderTextColor="#6b7280"
-                value={description} onChangeText={setDescription}
+                placeholder="Description (optional)"
+                placeholderTextColor="#6b7280"
+                value={description}
+                onChangeText={setDescription}
               />
               <TextInput
                 className="bg-surface text-text-primary rounded-lg px-3 min-h-[44px] mb-4 text-base border border-border"
-                placeholder="Amount *" placeholderTextColor="#6b7280"
-                keyboardType="numeric" value={amount} onChangeText={setAmount}
+                placeholder="Amount *"
+                placeholderTextColor="#6b7280"
+                keyboardType="numeric"
+                value={amount}
+                onChangeText={setAmount}
               />
               <View className="flex-row gap-3">
                 <Pressable
@@ -159,7 +200,9 @@ export default function FinesScreen() {
             ListEmptyComponent={
               <View className="items-center mt-16">
                 <ClipboardList size={40} color="#8b8fa3" strokeWidth={1.5} />
-                <Text className="text-text-secondary text-base font-medium mt-4">No fine types yet</Text>
+                <Text className="text-text-secondary text-base font-medium mt-4">
+                  No fine types yet
+                </Text>
                 <Text className="text-text-muted text-sm mt-1">Add one above to get started</Text>
               </View>
             }

@@ -4,26 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Runtime & Tooling
 
-**Bun is the sole runtime and package manager.** Do not use Node.js, npm, pnpm, yarn, vite CLI, jest, vitest, dotenv, express, better-sqlite3, ws, or ioredis. Bun provides built-in alternatives for all of these. Bun automatically loads `.env` files.
+**Bun is the sole runtime and package manager.** Do not use Node.js, npm, pnpm, or yarn. Bun automatically loads `.env` files.
 
 ## Commands
 
 ```bash
-# Development (from repo root)
-bun install                    # Install all workspace dependencies
+# Install all workspace dependencies (run from repo root)
+bun install
+
+# Development
 bun run dev                    # Run all apps in parallel
-bun run dev:api                # API only (port 3000)
-bun run dev:web                # Web frontend only (Vite dev server)
-
-# Testing
-cd apps/api && bun test        # Run API tests
-cd apps/api && bun test --watch  # Watch mode
-bun test <file>                # Run a single test file
-
-# Database (from apps/api/)
-bun run db:generate            # Generate Drizzle migrations
-bun run db:migrate             # Apply migrations
-bun run db:studio              # Open Drizzle Studio UI
+bun run dev:web                # Astro landing page only
+bun run dev:mobile             # Expo dev server only
 
 # Build
 bun run build                  # Build all apps
@@ -31,23 +23,20 @@ bun run build                  # Build all apps
 
 ## Architecture
 
-Bun monorepo with workspaces: `apps/*` and `packages/*`.
+Bun monorepo with a single workspace glob: `apps/*`. There is no backend — both apps are fully client-side.
 
 ### Apps
 
-- **`apps/api`** — Hono REST API on Bun. Routes are modular Hono instances in `src/routes/`, mounted in `src/index.ts`. Middleware chain: CORS → logger → rate limiter → auth. Request validation via `@hono/zod-validator` with Zod schemas defined inline in route files. Database is SQLite via Drizzle ORM (`src/db/schema.ts` for schema, `src/db/index.ts` for connection). Auth scaffolded with `better-auth` but not yet enforced on routes.
+- **`apps/web`** — Astro 5 marketing / landing page. Static site, no client JS framework. Entry point is `src/pages/index.astro`, which composes `src/layouts/Base.astro` with components from `src/components/`. The waitlist CTA is a `mailto:` link — no form backend. Deploys to Vercel as a static build (`astro build` → `dist/`).
 
-- **`apps/web`** — React 19 SPA built with Vite. Uses Eden Treaty (`src/api.ts`) for type-safe API calls derived from the Hono app's exported type. The API client type flows from `apps/api/src/index.ts` → `AppType` export → Eden Treaty generic.
-
-- **`apps/mobile`** — Expo/React Native app (boilerplate only).
-
-### Packages
-
-- **`packages/shared`** — Shared TypeScript types (`User`, `Team`, `Fine`, `Allocation`, etc.) and utilities used across apps.
+- **`apps/mobile`** — Expo / React Native app using Expo Router for navigation and NativeWind (Tailwind v3) for styling. State is fully local: **Drizzle ORM over `expo-sqlite`** — no network calls, no auth, no server sync. Schema lives in `db/` and is created on app startup. This is intentional and matches the landing page's "works offline, no accounts" promise.
 
 ### Key Patterns
 
-- **Route modules** export a `new Hono()` instance with chained handlers, mounted via `app.route("/api/path", routeModule)` in the API entry point.
-- **Type-safe client**: The API app exports its type as `AppType`, which the web app imports to get compile-time route/response checking via Eden Treaty.
-- **Database init**: `initializeDatabase()` in `apps/api/src/index.ts` creates tables via raw SQL on startup. Drizzle ORM is used for queries.
-- **Environment**: Config in `apps/api/src/lib/env.ts` with defaults. Required vars: `DATABASE_URL`, `JWT_SECRET`, `BETTER_AUTH_SECRET`. Copy `apps/api/.env.example` to `apps/api/.env`.
+- **No shared package.** Types are colocated with whichever app uses them. If both apps ever need the same type, prefer duplication over premature extraction.
+- **No backend.** If you need a server-side capability (waitlist storage, analytics, push notifications), discuss the trade-off before adding one back — the whole point of the current architecture is that there isn't one.
+- **Mobile is the source of truth for domain data.** All fines, teams, and allocations live in the device's SQLite database. Any future sync layer should treat the device as authoritative, not the other way round.
+
+### Historical context
+
+An earlier version of this repo had a Hono+Drizzle API in `apps/api` and a shared types package in `packages/shared`. Both were deleted — the mobile app was restructured to be self-sufficient, and the web app became a pure marketing site. If you need to reference the old API code, it is preserved at the `archive/api-v0` git tag.

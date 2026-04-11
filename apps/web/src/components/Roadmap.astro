@@ -13,25 +13,28 @@ const statusLabel: Record<RoadmapStatus, string> = {
     <p class="eyebrow"><span class="dot"></span> On the pitch soon</p>
     <h2>What's coming next</h2>
     <p class="section-lede">
-      Team Tally is built in the open. Here's what's in the changing room waiting to
-      come on.
+      Team Tally is built in the open. Here's what's in the changing room waiting to come on.
     </p>
   </div>
 
   <ol class="road-grid">
-    {roadmap.map((item) => (
-      <li class={`road-card status-${item.status}`}>
-        <div class="road-head">
-          <span class="road-icon" aria-hidden="true">{item.icon}</span>
-          <span class={`badge badge-${item.status}`}>
-            {item.status === "next" && <span class="pulse" aria-hidden="true"></span>}
-            {statusLabel[item.status]}
-          </span>
-        </div>
-        <h3>{item.title}</h3>
-        <p>{item.description}</p>
-      </li>
-    ))}
+    {
+      roadmap.map((item) => (
+        <li class={`road-card status-${item.status}`}>
+          <div class="road-head">
+            <span class="road-icon" aria-hidden="true">
+              {item.icon}
+            </span>
+            <span class={`badge badge-${item.status}`}>
+              {item.status === "next" && <span class="pulse" aria-hidden="true" />}
+              {statusLabel[item.status]}
+            </span>
+          </div>
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+        </li>
+      ))
+    }
   </ol>
 </section>
 
@@ -98,14 +101,20 @@ const statusLabel: Record<RoadmapStatus, string> = {
     border-radius: var(--radius);
     padding: 1px;
     background: linear-gradient(135deg, transparent, rgba(245, 158, 11, 0.3), transparent);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0;
     transition: opacity 0.2s;
   }
-  .road-card.status-next::before { opacity: 1; }
-  .road-card:hover { transform: translateY(-2px); }
+  .road-card.status-next::before {
+    opacity: 1;
+  }
+  .road-card:hover {
+    transform: translateY(-2px);
+  }
 
   .road-head {
     display: flex;
@@ -157,8 +166,13 @@ const statusLabel: Record<RoadmapStatus, string> = {
     animation: pulse 1.8s ease-in-out infinite;
   }
   @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6); }
-    50% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+    }
   }
 
   .road-card h3 {
@@ -172,6 +186,8 @@ const statusLabel: Record<RoadmapStatus, string> = {
   }
 
   @media (max-width: 860px) {
-    .roadmap { padding: 56px 20px; }
+    .roadmap {
+      padding: 56px 20px;
+    }
   }
 </style>

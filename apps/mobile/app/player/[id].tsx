@@ -8,7 +8,13 @@ import { getTeam, getMembers, getPlayerDetail, deleteFineEntry } from "@/db/quer
 import { formatAmount } from "@/lib/currency";
 import { PlayerAvatar } from "@/components/player-avatar";
 
-type BreakdownItem = { fineTypeId: string; fineTypeName: string; amount: number; count: number; subtotal: number };
+type BreakdownItem = {
+  fineTypeId: string;
+  fineTypeName: string;
+  amount: number;
+  count: number;
+  subtotal: number;
+};
 type HistoryItem = { id: string; fineTypeName: string; date: string; amount: number };
 
 export default function PlayerDetailScreen() {
@@ -48,7 +54,8 @@ export default function PlayerDetailScreen() {
         style: "destructive",
         onPress: () => {
           deleteFineEntry(entryId);
-          if (process.env.EXPO_OS === "ios") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+          if (process.env.EXPO_OS === "ios")
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
           loadData();
         },
       },
@@ -92,10 +99,15 @@ export default function PlayerDetailScreen() {
                   <View className="flex-1 mr-3">
                     <Text className="text-text-primary text-base">{item.fineTypeName}</Text>
                     <Text className="text-text-muted text-sm mt-0.5">
-                      {item.count} {item.count === 1 ? "time" : "times"} × {formatAmount(item.amount, currency)}
+                      {item.count} {item.count === 1 ? "time" : "times"} ×{" "}
+                      {formatAmount(item.amount, currency)}
                     </Text>
                   </View>
-                  <Text className="text-danger text-base font-semibold" selectable style={styles.amount}>
+                  <Text
+                    className="text-danger text-base font-semibold"
+                    selectable
+                    style={styles.amount}
+                  >
                     {formatAmount(item.subtotal, currency)}
                   </Text>
                 </View>
@@ -125,7 +137,11 @@ export default function PlayerDetailScreen() {
                     <Text className="text-text-primary text-base">{entry.fineTypeName}</Text>
                     <Text className="text-text-muted text-sm mt-0.5">{entry.date}</Text>
                   </View>
-                  <Text className="text-danger text-base font-semibold" selectable style={styles.amount}>
+                  <Text
+                    className="text-danger text-base font-semibold"
+                    selectable
+                    style={styles.amount}
+                  >
                     {formatAmount(entry.amount, currency)}
                   </Text>
                 </Pressable>

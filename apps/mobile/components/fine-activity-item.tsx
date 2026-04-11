@@ -7,7 +7,12 @@ interface FineActivityItemProps {
   date: string;
 }
 
-export function FineActivityItem({ memberName, fineTypeName, amount, date }: FineActivityItemProps) {
+export function FineActivityItem({
+  memberName,
+  fineTypeName,
+  amount,
+  date,
+}: FineActivityItemProps) {
   return (
     <View className="flex-row items-center min-h-[44px] py-3 border-b border-border">
       <View className="flex-1">

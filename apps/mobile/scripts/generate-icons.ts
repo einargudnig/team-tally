@@ -98,9 +98,7 @@ for (const t of targets) {
     });
     const png = resvg.render().asPng();
     writeFileSync(t.outPath, png);
-    console.log(
-      `  ✓ ${t.outLabel.padEnd(30)} ${String(t.size).padStart(4)}px  —  ${t.note}`,
-    );
+    console.log(`  ✓ ${t.outLabel.padEnd(30)} ${String(t.size).padStart(4)}px  —  ${t.note}`);
     ok++;
   } catch (err) {
     console.error(`  ✗ ${t.outLabel.padEnd(30)} — ${(err as Error).message}`);

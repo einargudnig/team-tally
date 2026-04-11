@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useRef } from "react";
 import { KeyboardAvoidingView, StyleSheet } from "react-native";
 import { View, Text, TextInput, Pressable, ScrollView } from "react-native";
 import { useFocusEffect } from "expo-router";
@@ -17,7 +17,9 @@ export default function SettingsScreen() {
   useFocusEffect(
     useCallback(() => {
       loadData();
-      return () => { if (savedTimer.current) clearTimeout(savedTimer.current); };
+      return () => {
+        if (savedTimer.current) clearTimeout(savedTimer.current);
+      };
     }, [])
   );
 
@@ -32,7 +34,8 @@ export default function SettingsScreen() {
   function handleSave() {
     if (!teamId || !teamName.trim()) return;
     updateTeam(teamId, { name: teamName.trim(), currency: selectedCurrency });
-    if (process.env.EXPO_OS === "ios") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (process.env.EXPO_OS === "ios")
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setSaved(true);
     savedTimer.current = setTimeout(() => setSaved(false), 1500);
   }
@@ -54,8 +57,11 @@ export default function SettingsScreen() {
         <TextInput
           className="bg-card border border-border rounded-xl px-4 min-h-[44px] text-text-primary text-base mb-6"
           style={styles.card}
-          placeholder="Team name" placeholderTextColor="#6b7280"
-          value={teamName} onChangeText={setTeamName} returnKeyType="done"
+          placeholder="Team name"
+          placeholderTextColor="#6b7280"
+          value={teamName}
+          onChangeText={setTeamName}
+          returnKeyType="done"
         />
 
         <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mb-2">
@@ -69,21 +75,31 @@ export default function SettingsScreen() {
           style={styles.card}
         >
           <Text className="text-text-secondary text-sm">Currency</Text>
-          <Text className="text-text-primary text-base">{selectedInfo.code} {selectedInfo.symbol}</Text>
+          <Text className="text-text-primary text-base">
+            {selectedInfo.code} {selectedInfo.symbol}
+          </Text>
         </Pressable>
 
         {showCurrencyPicker && (
-          <View className="bg-card border border-border rounded-xl mb-6 max-h-48 overflow-hidden" style={styles.card}>
+          <View
+            className="bg-card border border-border rounded-xl mb-6 max-h-48 overflow-hidden"
+            style={styles.card}
+          >
             <ScrollView nestedScrollEnabled>
               {currencies.map((c) => (
                 <Pressable
                   key={c.code}
-                  onPress={() => { setSelectedCurrency(c.code); setShowCurrencyPicker(false); }}
+                  onPress={() => {
+                    setSelectedCurrency(c.code);
+                    setShowCurrencyPicker(false);
+                  }}
                   className={`px-4 min-h-[44px] justify-center border-b border-border ${
                     c.code === selectedCurrency ? "bg-primary-muted" : ""
                   }`}
                 >
-                  <Text className={`text-base ${c.code === selectedCurrency ? "text-primary" : "text-text-primary"}`}>
+                  <Text
+                    className={`text-base ${c.code === selectedCurrency ? "text-primary" : "text-text-primary"}`}
+                  >
                     {c.symbol} — {c.name} ({c.code})
                   </Text>
                 </Pressable>
@@ -102,7 +118,9 @@ export default function SettingsScreen() {
           }`}
           style={styles.card}
         >
-          <Text className={`text-base font-semibold ${teamName.trim() ? "text-surface" : "text-text-muted"}`}>
+          <Text
+            className={`text-base font-semibold ${teamName.trim() ? "text-surface" : "text-text-muted"}`}
+          >
             {saved ? "✓ Saved" : "Save Changes"}
           </Text>
         </Pressable>

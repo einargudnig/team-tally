@@ -60,16 +60,20 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <meta name="twitter:image" content={ogImageURL} />
 
     <!-- JSON-LD: SoftwareApplication -->
-    <script type="application/ld+json" is:inline set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "MobileApplication",
-      "name": "Team Tally",
-      "applicationCategory": "SportsApplication",
-      "operatingSystem": "iOS, Android",
-      "description": description,
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-      "url": canonicalURL.toString(),
-    })} />
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "MobileApplication",
+        name: "Team Tally",
+        applicationCategory: "SportsApplication",
+        operatingSystem: "iOS, Android",
+        description: description,
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        url: canonicalURL.toString(),
+      })}
+    />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -97,10 +101,23 @@ const ogImageURL = new URL(ogImage, Astro.site);
         --radius: 16px;
         --max-width: 1200px;
       }
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+      }
       body {
-        font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          sans-serif;
         background: var(--surface);
         color: var(--text-primary);
         line-height: 1.55;
@@ -109,9 +126,19 @@ const ogImageURL = new URL(ogImage, Astro.site);
         text-rendering: optimizeLegibility;
         overflow-x: hidden;
       }
-      a { color: inherit; text-decoration: none; }
-      img, svg { display: block; max-width: 100%; }
-      ::selection { background: var(--primary); color: var(--surface); }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img,
+      svg {
+        display: block;
+        max-width: 100%;
+      }
+      ::selection {
+        background: var(--primary);
+        color: var(--surface);
+      }
     </style>
   </body>
 </html>
