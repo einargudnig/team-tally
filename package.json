@@ -13,7 +13,8 @@
     "build": "bun run --filter '*' build",
     "dev:api": "bun run --filter @team-tally/api dev",
     "dev:web": "bun run --filter @team-tally/web dev",
-    "dev:shared": "bun run --filter @team-tally/shared dev"
+    "dev:shared": "bun run --filter @team-tally/shared dev",
+    "dev:mobile": "bun run --filter @team-tally/mobile dev"
   },
   "devDependencies": {
     "@types/bun": "latest"

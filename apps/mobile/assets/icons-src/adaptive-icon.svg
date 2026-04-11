@@ -1,0 +1,22 @@
+<!--
+  Android adaptive icon FOREGROUND — 1024x1024.
+  The launcher crops to roughly the center 66% (safe zone), so the mark
+  must be inset. Background is set separately in app.json via
+  `android.adaptiveIcon.backgroundColor`.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- transparent background — Android provides its own -->
+
+  <!-- Comb glyph inset to ~60% of canvas so the full mark survives launcher masks.
+       Scaled down from the iOS icon by ~0.62. Center of canvas is (512, 512). -->
+
+  <!-- rail (shifted +27 for optical centering within the safe zone) -->
+  <rect x="324" y="403" width="376" height="44" rx="18" fill="#f59e0b"/>
+
+  <!-- teeth (shifted +27) -->
+  <rect x="326" y="447" width="34" height="158" rx="17" fill="#f59e0b"/>
+  <rect x="410" y="447" width="34" height="218" rx="17" fill="#f59e0b"/>
+  <rect x="495" y="447" width="34" height="277" rx="17" fill="#f59e0b"/>
+  <rect x="580" y="447" width="34" height="218" rx="17" fill="#f59e0b"/>
+  <rect x="664" y="447" width="34" height="158" rx="17" fill="#f59e0b"/>
+</svg>

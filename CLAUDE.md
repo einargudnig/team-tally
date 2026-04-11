@@ -1,111 +1,53 @@
----
-description: Use Bun instead of Node.js, npm, pnpm, or vite.
-globs: "*.ts, *.tsx, *.html, *.css, *.js, *.jsx, package.json"
-alwaysApply: false
----
+# CLAUDE.md
 
-Default to using Bun instead of Node.js.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-- Use `bun <file>` instead of `node <file>` or `ts-node <file>`
-- Use `bun test` instead of `jest` or `vitest`
-- Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
-- Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
-- Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Bun automatically loads .env, so don't use dotenv.
+## Runtime & Tooling
 
-## APIs
+**Bun is the sole runtime and package manager.** Do not use Node.js, npm, pnpm, yarn, vite CLI, jest, vitest, dotenv, express, better-sqlite3, ws, or ioredis. Bun provides built-in alternatives for all of these. Bun automatically loads `.env` files.
 
-- `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
-- `bun:sqlite` for SQLite. Don't use `better-sqlite3`.
-- `Bun.redis` for Redis. Don't use `ioredis`.
-- `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
-- `WebSocket` is built-in. Don't use `ws`.
-- Prefer `Bun.file` over `node:fs`'s readFile/writeFile
-- Bun.$`ls` instead of execa.
+## Commands
 
-## Testing
+```bash
+# Development (from repo root)
+bun install                    # Install all workspace dependencies
+bun run dev                    # Run all apps in parallel
+bun run dev:api                # API only (port 3000)
+bun run dev:web                # Web frontend only (Vite dev server)
 
-Use `bun test` to run tests.
+# Testing
+cd apps/api && bun test        # Run API tests
+cd apps/api && bun test --watch  # Watch mode
+bun test <file>                # Run a single test file
 
-```ts#index.test.ts
-import { test, expect } from "bun:test";
+# Database (from apps/api/)
+bun run db:generate            # Generate Drizzle migrations
+bun run db:migrate             # Apply migrations
+bun run db:studio              # Open Drizzle Studio UI
 
-test("hello world", () => {
-  expect(1).toBe(1);
-});
+# Build
+bun run build                  # Build all apps
 ```
 
-## Frontend
+## Architecture
 
-Use HTML imports with `Bun.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
+Bun monorepo with workspaces: `apps/*` and `packages/*`.
 
-Server:
+### Apps
 
-```ts#index.ts
-import index from "./index.html"
+- **`apps/api`** — Hono REST API on Bun. Routes are modular Hono instances in `src/routes/`, mounted in `src/index.ts`. Middleware chain: CORS → logger → rate limiter → auth. Request validation via `@hono/zod-validator` with Zod schemas defined inline in route files. Database is SQLite via Drizzle ORM (`src/db/schema.ts` for schema, `src/db/index.ts` for connection). Auth scaffolded with `better-auth` but not yet enforced on routes.
 
-Bun.serve({
-  routes: {
-    "/": index,
-    "/api/users/:id": {
-      GET: (req) => {
-        return new Response(JSON.stringify({ id: req.params.id }));
-      },
-    },
-  },
-  // optional websocket support
-  websocket: {
-    open: (ws) => {
-      ws.send("Hello, world!");
-    },
-    message: (ws, message) => {
-      ws.send(message);
-    },
-    close: (ws) => {
-      // handle close
-    }
-  },
-  development: {
-    hmr: true,
-    console: true,
-  }
-})
-```
+- **`apps/web`** — React 19 SPA built with Vite. Uses Eden Treaty (`src/api.ts`) for type-safe API calls derived from the Hono app's exported type. The API client type flows from `apps/api/src/index.ts` → `AppType` export → Eden Treaty generic.
 
-HTML files can import .tsx, .jsx or .js files directly and Bun's bundler will transpile & bundle automatically. `<link>` tags can point to stylesheets and Bun's CSS bundler will bundle.
+- **`apps/mobile`** — Expo/React Native app (boilerplate only).
 
-```html#index.html
-<html>
-  <body>
-    <h1>Hello, world!</h1>
-    <script type="module" src="./frontend.tsx"></script>
-  </body>
-</html>
-```
+### Packages
 
-With the following `frontend.tsx`:
+- **`packages/shared`** — Shared TypeScript types (`User`, `Team`, `Fine`, `Allocation`, etc.) and utilities used across apps.
 
-```tsx#frontend.tsx
-import React from "react";
+### Key Patterns
 
-// import .css files directly and it works
-import './index.css';
-
-import { createRoot } from "react-dom/client";
-
-const root = createRoot(document.body);
-
-export default function Frontend() {
-  return <h1>Hello, world!</h1>;
-}
-
-root.render(<Frontend />);
-```
-
-Then, run index.ts
-
-```sh
-bun --hot ./index.ts
-```
-
-For more information, read the Bun API docs in `node_modules/bun-types/docs/**.md`.
+- **Route modules** export a `new Hono()` instance with chained handlers, mounted via `app.route("/api/path", routeModule)` in the API entry point.
+- **Type-safe client**: The API app exports its type as `AppType`, which the web app imports to get compile-time route/response checking via Eden Treaty.
+- **Database init**: `initializeDatabase()` in `apps/api/src/index.ts` creates tables via raw SQL on startup. Drizzle ORM is used for queries.
+- **Environment**: Config in `apps/api/src/lib/env.ts` with defaults. Required vars: `DATABASE_URL`, `JWT_SECRET`, `BETTER_AUTH_SECRET`. Copy `apps/api/.env.example` to `apps/api/.env`.

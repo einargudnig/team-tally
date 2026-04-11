@@ -1,0 +1,177 @@
+---
+import { roadmap, type RoadmapStatus } from "../data/roadmap";
+
+const statusLabel: Record<RoadmapStatus, string> = {
+  next: "Up next",
+  planned: "Planned",
+  exploring: "Exploring",
+};
+---
+
+<section id="roadmap" class="roadmap">
+  <div class="section-head">
+    <p class="eyebrow"><span class="dot"></span> On the pitch soon</p>
+    <h2>What's coming next</h2>
+    <p class="section-lede">
+      Team Tally is built in the open. Here's what's in the changing room waiting to
+      come on.
+    </p>
+  </div>
+
+  <ol class="road-grid">
+    {roadmap.map((item) => (
+      <li class={`road-card status-${item.status}`}>
+        <div class="road-head">
+          <span class="road-icon" aria-hidden="true">{item.icon}</span>
+          <span class={`badge badge-${item.status}`}>
+            {item.status === "next" && <span class="pulse" aria-hidden="true"></span>}
+            {statusLabel[item.status]}
+          </span>
+        </div>
+        <h3>{item.title}</h3>
+        <p>{item.description}</p>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .roadmap {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+  .section-head {
+    max-width: 720px;
+    margin: 0 auto 56px;
+    text-align: center;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+  }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+  }
+  h2 {
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .section-lede {
+    font-size: 17px;
+    color: var(--text-secondary);
+  }
+
+  .road-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .road-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .road-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    padding: 1px;
+    background: linear-gradient(135deg, transparent, rgba(245, 158, 11, 0.3), transparent);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .road-card.status-next::before { opacity: 1; }
+  .road-card:hover { transform: translateY(-2px); }
+
+  .road-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .road-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(245, 158, 11, 0.15);
+    font-size: 22px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--border);
+  }
+  .badge-next {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--primary);
+    border-color: rgba(245, 158, 11, 0.4);
+  }
+  .badge-planned {
+    background: rgba(156, 163, 175, 0.1);
+    color: var(--text-secondary);
+  }
+  .badge-exploring {
+    background: transparent;
+    color: var(--text-muted);
+  }
+  .pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6); }
+    50% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+  }
+
+  .road-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .road-card p {
+    color: var(--text-secondary);
+    font-size: 15px;
+  }
+
+  @media (max-width: 860px) {
+    .roadmap { padding: 56px 20px; }
+  }
+</style>
