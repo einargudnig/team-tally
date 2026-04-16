@@ -1,0 +1,157 @@
+---
+import Base from "../layouts/Base.astro";
+
+const title = "Privacy Policy — Team Tally";
+const description =
+  "Team Tally's privacy policy. All data stays on your device.";
+---
+
+<Base title={title} description={description}>
+  <main class="privacy">
+    <div class="container">
+      <a href="/" class="back-link">&larr; Back to Team Tally</a>
+
+      <h1>Privacy Policy</h1>
+      <p class="last-updated">Last updated: April 13, 2026</p>
+
+      <!-- TODO: Review and adjust the statements below.
+           These reflect the current architecture (local-only SQLite,
+           no network calls, no accounts), but YOU are making the legal
+           commitment — make sure every claim is accurate. -->
+
+      <section>
+        <h2>What data Team Tally stores</h2>
+        <p>
+          <!-- TODO (you): List the types of data your app stores.
+               For example: team names, player names, fine descriptions,
+               amounts, payment status, allocation records.
+               Be specific about what a user would enter. -->
+        </p>
+      </section>
+
+      <section>
+        <h2>Where your data lives</h2>
+        <p>
+          All data is stored locally on your device in a SQLite database.
+          Nothing is transmitted to our servers or any third party — Team Tally
+          has no servers.
+        </p>
+      </section>
+
+      <section>
+        <h2>Data we collect</h2>
+        <p>
+          <strong>Inside the app:</strong> none. Team Tally does not collect
+          analytics, crash reports, usage data, or personal information from
+          the app. There are no user accounts and no sign-in.
+        </p>
+        <p>
+          <strong>Through this website:</strong> only the email address you
+          provide if you join the waitlist. See "Third-party services" below.
+        </p>
+      </section>
+
+      <section>
+        <h2>Third-party services</h2>
+        <p>
+          The Team Tally mobile app does not integrate with any third-party
+          analytics, advertising, or tracking services.
+        </p>
+        <p>
+          The waitlist form on this website uses
+          <a href="https://resend.com" target="_blank" rel="noopener noreferrer">Resend</a>
+          to store your email address and send you a one-time launch
+          notification. Your email is not shared with anyone else and is
+          removed if you unsubscribe.
+        </p>
+      </section>
+
+      <section>
+        <h2>Data deletion</h2>
+        <p>
+          Uninstalling Team Tally removes all stored data permanently.
+          There is no cloud backup or recovery — once the app is removed,
+          the data is gone.
+        </p>
+      </section>
+
+      <section>
+        <h2>Children's privacy</h2>
+        <p>
+          <!-- TODO (you): State your position. The app doesn't collect
+               data, so COPPA isn't really triggered, but Apple likes
+               to see this addressed. A simple statement like
+               "Team Tally does not knowingly collect information from
+               children under 13." works. -->
+        </p>
+      </section>
+
+      <section>
+        <h2>Changes to this policy</h2>
+        <p>
+          If this policy changes, the updated version will be posted here
+          with a new "Last updated" date.
+        </p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          <!-- TODO (you): Add your contact email.
+               Apple requires a way for users to reach you. -->
+          Questions? Reach out at
+          <a href="mailto:YOUR_EMAIL">YOUR_EMAIL</a>.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <style>
+    .privacy {
+      min-height: 100vh;
+      padding: 4rem 1.5rem;
+    }
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .back-link {
+      display: inline-block;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-bottom: 2rem;
+      transition: color 0.2s;
+    }
+    .back-link:hover {
+      color: var(--primary);
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .last-updated {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 2.5rem;
+    }
+    section {
+      margin-bottom: 2rem;
+    }
+    h2 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--primary-light);
+    }
+    p {
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  </style>
+</Base>

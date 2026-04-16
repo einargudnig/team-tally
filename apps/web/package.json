@@ -11,7 +11,10 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/vercel": "8",
     "astro": "^5.1.0",
-    "@astrojs/sitemap": "^3.2.1"
+    "lucide-astro": "^0.556.0",
+    "resend": "^6.10.0"
   }
 }
