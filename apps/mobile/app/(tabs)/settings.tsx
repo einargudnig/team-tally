@@ -2,11 +2,13 @@ import { useState, useCallback, useRef } from "react";
 import { KeyboardAvoidingView, StyleSheet } from "react-native";
 import { View, Text, TextInput, Pressable, ScrollView } from "react-native";
 import { useFocusEffect } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { getTeam, updateTeam } from "@/db/queries";
 import { currencies } from "@/lib/currency";
 
 export default function SettingsScreen() {
+  const insets = useSafeAreaInsets();
   const [teamId, setTeamId] = useState<string | null>(null);
   const [teamName, setTeamName] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState("ISK");
@@ -46,8 +48,7 @@ export default function SettingsScreen() {
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <ScrollView
         className="flex-1 bg-surface"
-        contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 8 }]}
         contentContainerClassName="px-5"
         keyboardShouldPersistTaps="handled"
       >
@@ -130,6 +131,6 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  scrollContent: { flexGrow: 1, paddingTop: 16, paddingBottom: 32 },
+  scrollContent: { flexGrow: 1, paddingBottom: 32 },
   card: { borderCurve: "continuous" },
 });

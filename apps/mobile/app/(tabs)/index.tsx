@@ -10,6 +10,9 @@ import {
   getRecentActivity,
   getTotalOutstanding,
   getMembers,
+  isDoubleDayActive,
+  setDoubleDay,
+  applyMonthlyFines,
 } from "@/db/queries";
 import { formatAmount } from "@/lib/currency";
 import { LeaderboardItem } from "@/components/leaderboard-item";
@@ -34,12 +37,14 @@ type ActivityEntry = {
   date: string;
 };
 type HomeData = {
+  teamId: string;
   teamName: string;
   currency: string;
   playerCount: number;
   totalOutstanding: number;
   leaderboard: LeaderboardEntry[];
   recentActivity: ActivityEntry[];
+  doubleDayActive: boolean;
 };
 
 export default function HomeScreen() {
@@ -60,14 +65,26 @@ export default function HomeScreen() {
       setData(null);
       return;
     }
+    applyMonthlyFines(team.id);
+    const fresh = getTeam()!;
     setData({
-      teamName: team.name,
-      currency: team.currency,
-      playerCount: getMembers(team.id).length,
-      totalOutstanding: getTotalOutstanding(team.id),
-      leaderboard: getLeaderboard(team.id),
-      recentActivity: getRecentActivity(team.id),
+      teamId: fresh.id,
+      teamName: fresh.name,
+      currency: fresh.currency,
+      playerCount: getMembers(fresh.id).length,
+      totalOutstanding: getTotalOutstanding(fresh.id),
+      leaderboard: getLeaderboard(fresh.id),
+      recentActivity: getRecentActivity(fresh.id),
+      doubleDayActive: isDoubleDayActive(fresh),
     });
+  }
+
+  function toggleDoubleDay() {
+    if (!data) return;
+    if (process.env.EXPO_OS === "ios")
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setDoubleDay(data.teamId, !data.doubleDayActive);
+    loadData();
   }
 
   function onRefresh() {
@@ -84,7 +101,15 @@ export default function HomeScreen() {
     );
   }
 
-  const { teamName, currency, playerCount, totalOutstanding, leaderboard, recentActivity } = data;
+  const {
+    teamName,
+    currency,
+    playerCount,
+    totalOutstanding,
+    leaderboard,
+    recentActivity,
+    doubleDayActive,
+  } = data;
   const hasFines = recentActivity.length > 0;
 
   return (
@@ -111,6 +136,37 @@ export default function HomeScreen() {
             <Logo size={32} />
           </View>
         </View>
+
+        {/* Double day toggle */}
+        <Pressable
+          onPress={toggleDoubleDay}
+          accessibilityRole="switch"
+          accessibilityState={{ checked: doubleDayActive }}
+          accessibilityLabel={`Double day ${doubleDayActive ? "on" : "off"}`}
+          className={`mx-5 mt-4 rounded-xl px-4 min-h-[48px] flex-row items-center justify-between active:opacity-80 ${
+            doubleDayActive ? "bg-primary" : "bg-card border border-border"
+          }`}
+          style={styles.card}
+        >
+          <View className="flex-row items-center gap-3">
+            <Text
+              className={`text-lg font-bold ${doubleDayActive ? "text-surface" : "text-primary"}`}
+              style={styles.amount}
+            >
+              2×
+            </Text>
+            <Text
+              className={`text-sm font-semibold ${doubleDayActive ? "text-surface" : "text-text-primary"}`}
+            >
+              Double day {doubleDayActive ? "on" : "off"}
+            </Text>
+          </View>
+          <Text
+            className={`text-xs ${doubleDayActive ? "text-surface/80" : "text-text-muted"}`}
+          >
+            {doubleDayActive ? "All fines ×2 today" : "Tap to enable"}
+          </Text>
+        </Pressable>
 
         {/* Total Outstanding */}
         <View

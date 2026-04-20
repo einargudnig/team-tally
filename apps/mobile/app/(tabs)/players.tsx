@@ -2,6 +2,7 @@ import { FlatList, Alert, RefreshControl, StyleSheet } from "react-native";
 import { View, Text, TextInput, Pressable } from "react-native";
 import { useState, useCallback } from "react";
 import { useFocusEffect, Link } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { UserPlus } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { getTeam, getMembers, createMember, deleteMember } from "@/db/queries";
@@ -12,6 +13,7 @@ type Member = { id: string; teamId: string; name: string; createdAt: Date };
 const ITEM_HEIGHT = 52;
 
 export default function PlayersScreen() {
+  const insets = useSafeAreaInsets();
   const [teamId, setTeamId] = useState<string | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [newName, setNewName] = useState("");
@@ -94,7 +96,10 @@ export default function PlayersScreen() {
   return (
     <View className="flex-1 bg-surface">
       {/* Add player row */}
-      <View className="flex-row items-center gap-2 px-5 pt-3 pb-4">
+      <View
+        className="flex-row items-center gap-2 px-5 pb-4"
+        style={{ paddingTop: insets.top + 8 }}
+      >
         <TextInput
           className="flex-1 bg-card text-text-primary rounded-xl px-4 min-h-[44px] text-base border border-border"
           style={styles.card}
