@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { View, Text, TextInput, Pressable } from "react-native";
 import { useFocusEffect } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ClipboardList } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import { getTeam, getFineTypes, createFineType, deleteFineType } from "@/db/queries";
@@ -24,6 +25,7 @@ type FineType = {
 };
 
 export default function FinesScreen() {
+  const insets = useSafeAreaInsets();
   const [teamId, setTeamId] = useState<string | null>(null);
   const [currency, setCurrency] = useState("USD");
   const [fineTypesList, setFineTypesList] = useState<FineType[]>([]);
@@ -130,7 +132,7 @@ export default function FinesScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View className="flex-1 bg-surface">
-        <View className="px-5 pt-3 flex-1">
+        <View className="px-5 flex-1" style={{ paddingTop: insets.top + 8 }}>
           {!showForm && (
             <Pressable
               onPress={() => setShowForm(true)}
