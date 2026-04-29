@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Alert, Platform, StyleSheet, TextInput } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, TextInput } from "react-native";
 import { useRouter, Stack } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { View, Text, ScrollView, Pressable } from "react-native";
@@ -36,6 +36,7 @@ export default function AddFineScreen() {
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
   const [selectedFineTypeId, setSelectedFineTypeId] = useState<string | null>(null);
   const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [showNewTypeForm, setShowNewTypeForm] = useState(false);
   const [newTypeName, setNewTypeName] = useState("");
@@ -99,27 +100,32 @@ export default function AddFineScreen() {
   }
 
   return (
-    <View className="flex-1 bg-surface">
-      <Stack.Screen
-        options={{
-          headerRight: () => (
-            <Pressable
-              onPress={() => router.back()}
-              accessibilityRole="button"
-              accessibilityLabel="Done"
-              hitSlop={8}
-            >
-              <Text className="text-primary text-base font-medium">Done</Text>
-            </Pressable>
-          ),
-        }}
-      />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={{ flex: 1 }}
+    >
+      <View className="flex-1 bg-surface">
+        <Stack.Screen
+          options={{
+            headerRight: () => (
+              <Pressable
+                onPress={() => router.back()}
+                accessibilityRole="button"
+                accessibilityLabel="Done"
+                hitSlop={8}
+              >
+                <Text className="text-primary text-base font-medium">Done</Text>
+              </Pressable>
+            ),
+          }}
+        />
 
-      <ScrollView
-        className="flex-1"
-        contentInsetAdjustmentBehavior="automatic"
-        contentContainerClassName="px-5 pb-8"
-      >
+        <ScrollView
+          className="flex-1"
+          contentInsetAdjustmentBehavior="automatic"
+          contentContainerClassName="px-5 pb-6"
+          keyboardShouldPersistTaps="handled"
+        >
         {doubleDayActive && (
           <View
             className="mt-4 bg-primary rounded-xl px-4 py-3 flex-row items-center gap-2"
@@ -245,6 +251,30 @@ export default function AddFineScreen() {
                   </Pressable>
                 </View>
               </View>
+            ) : fineTypesList.length === 0 ? (
+              <View
+                className="bg-card border border-border rounded-xl px-5 py-6 items-center"
+                style={styles.card}
+              >
+                <Text className="text-3xl mb-2">📝</Text>
+                <Text className="text-text-primary text-base font-semibold mb-1">
+                  No fine types yet
+                </Text>
+                <Text className="text-text-muted text-sm text-center mb-4">
+                  Define what you fine players for — late to practice, missing kit, etc.
+                </Text>
+                <Pressable
+                  onPress={() => setShowNewTypeForm(true)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Create your first fine type"
+                  className="bg-primary rounded-xl min-h-[44px] px-6 justify-center items-center active:opacity-80"
+                  style={styles.card}
+                >
+                  <Text className="text-surface text-base font-semibold">
+                    Create your first fine
+                  </Text>
+                </Pressable>
+              </View>
             ) : (
               <Pressable
                 onPress={() => setShowNewTypeForm(true)}
@@ -264,26 +294,76 @@ export default function AddFineScreen() {
           <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mb-3">
             When?
           </Text>
-          <View
-            className="bg-card rounded-xl overflow-hidden border border-border"
-            style={styles.card}
-          >
-            <DateTimePicker
-              value={date}
-              mode="date"
-              display={Platform.OS === "ios" ? "inline" : "default"}
-              maximumDate={new Date()}
-              onChange={(_event, selectedDate) => {
-                if (selectedDate) setDate(selectedDate);
-              }}
-              themeVariant="dark"
-              style={{ alignSelf: "center" }}
-            />
-          </View>
+          {(() => {
+            const today = startOfToday();
+            const yesterday = startOfYesterday();
+            const onToday = !showDatePicker && isSameLocalDay(date, today);
+            const onYesterday = !showDatePicker && isSameLocalDay(date, yesterday);
+            const onCustom =
+              showDatePicker ||
+              (!isSameLocalDay(date, today) && !isSameLocalDay(date, yesterday));
+            const customLabel = onCustom && !showDatePicker ? formatDateShort(date) : "Pick…";
+            return (
+              <View className="flex-row gap-2">
+                <DateChip
+                  label="Today"
+                  selected={onToday}
+                  onPress={() => {
+                    setDate(today);
+                    setShowDatePicker(false);
+                  }}
+                />
+                <DateChip
+                  label="Yesterday"
+                  selected={onYesterday}
+                  onPress={() => {
+                    setDate(yesterday);
+                    setShowDatePicker(false);
+                  }}
+                />
+                <DateChip
+                  label={customLabel}
+                  selected={onCustom}
+                  onPress={() => setShowDatePicker(true)}
+                />
+              </View>
+            );
+          })()}
+
+          {showDatePicker && (
+            <View
+              className="mt-3 bg-card border border-border rounded-xl overflow-hidden"
+              style={styles.card}
+            >
+              <DateTimePicker
+                value={date}
+                mode="date"
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                maximumDate={new Date()}
+                onChange={(_event, selectedDate) => {
+                  if (Platform.OS === "android") setShowDatePicker(false);
+                  if (selectedDate) setDate(selectedDate);
+                }}
+                themeVariant="dark"
+                style={{ alignSelf: "center" }}
+              />
+              {Platform.OS === "ios" && (
+                <Pressable
+                  onPress={() => setShowDatePicker(false)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Done"
+                  className="border-t border-border min-h-[44px] justify-center items-center active:opacity-70"
+                >
+                  <Text className="text-primary text-base font-semibold">Done</Text>
+                </Pressable>
+              )}
+            </View>
+          )}
         </View>
 
-        {/* Confirm */}
-        <View className="mt-8">
+        </ScrollView>
+
+        <View className="px-5 pt-3 pb-6 border-t border-border bg-surface">
           {justAdded ? (
             <View
               className="bg-success rounded-2xl min-h-[48px] justify-center items-center"
@@ -316,8 +396,8 @@ export default function AddFineScreen() {
             </Pressable>
           )}
         </View>
-      </ScrollView>
-    </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -325,3 +405,54 @@ const styles = StyleSheet.create({
   card: { borderCurve: "continuous" },
   amount: { fontVariant: ["tabular-nums"] },
 });
+
+function startOfToday(): Date {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function startOfYesterday(): Date {
+  const d = startOfToday();
+  d.setDate(d.getDate() - 1);
+  return d;
+}
+
+function isSameLocalDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
+function formatDateShort(d: Date): string {
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+interface DateChipProps {
+  label: string;
+  selected: boolean;
+  onPress: () => void;
+}
+
+function DateChip({ label, selected, onPress }: DateChipProps) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityState={{ selected }}
+      accessibilityLabel={label}
+      className={`flex-1 rounded-xl min-h-[44px] justify-center items-center active:opacity-70 ${
+        selected ? "bg-primary" : "bg-card border border-border"
+      }`}
+      style={styles.card}
+    >
+      <Text
+        className={`text-sm font-medium ${selected ? "text-surface" : "text-text-secondary"}`}
+      >
+        {label}
+      </Text>
+    </Pressable>
+  );
+}

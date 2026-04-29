@@ -1,4 +1,4 @@
-interface CurrencyInfo {
+export interface CurrencyInfo {
   code: string;
   symbol: string;
   name: string;
@@ -6,7 +6,7 @@ interface CurrencyInfo {
   symbolPosition: "before" | "after";
 }
 
-const currencies: CurrencyInfo[] = [
+export const currencies: CurrencyInfo[] = [
   { code: "ISK", symbol: "kr", name: "Icelandic Króna", decimals: 0, symbolPosition: "after" },
   { code: "USD", symbol: "$", name: "US Dollar", decimals: 2, symbolPosition: "before" },
   { code: "EUR", symbol: "€", name: "Euro", decimals: 2, symbolPosition: "before" },
@@ -21,7 +21,7 @@ const currencies: CurrencyInfo[] = [
   { code: "PLN", symbol: "zł", name: "Polish Złoty", decimals: 2, symbolPosition: "after" },
 ];
 
-function getCurrencyInfo(code: string): CurrencyInfo {
+export function getCurrencyInfo(code: string): CurrencyInfo {
   return currencies.find((c) => c.code === code) ?? currencies[1]; // fallback USD
 }
 

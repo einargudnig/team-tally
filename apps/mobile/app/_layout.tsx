@@ -6,8 +6,12 @@ import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
 import { getTeam } from "@/db/queries";
+import { ErrorScreen } from "@/components/error-screen";
 
-export { ErrorBoundary } from "expo-router";
+export function ErrorBoundary({ error, retry }: { error: Error; retry: () => void }) {
+  if (__DEV__) console.error("[RootErrorBoundary]", error);
+  return <ErrorScreen error={error} retry={retry} />;
+}
 
 SplashScreen.preventAutoHideAsync();
 
@@ -53,7 +57,7 @@ export default function RootLayout() {
           options={{
             presentation: "formSheet",
             sheetGrabberVisible: true,
-            sheetAllowedDetents: [0.75, 1.0],
+            sheetAllowedDetents: [1.0],
             headerShown: true,
             title: "Add Fine",
             headerStyle: { backgroundColor: "#0f0f14" },

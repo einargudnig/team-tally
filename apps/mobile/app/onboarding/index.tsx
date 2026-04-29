@@ -3,7 +3,7 @@ import { KeyboardAvoidingView, StyleSheet } from "react-native";
 import { View, Text, TextInput, Pressable, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { createTeam } from "@/db/queries";
-import { currencies } from "@/lib/currency";
+import { currencies, getCurrencyInfo } from "@/lib/currency";
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -11,7 +11,7 @@ export default function OnboardingScreen() {
   const [selectedCurrency, setSelectedCurrency] = useState("ISK");
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
 
-  const selectedInfo = currencies.find((c) => c.code === selectedCurrency)!;
+  const selectedInfo = getCurrencyInfo(selectedCurrency);
 
   function handleContinue() {
     if (!teamName.trim()) return;

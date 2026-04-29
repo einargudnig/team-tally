@@ -5,7 +5,7 @@ import { useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { getTeam, updateTeam } from "@/db/queries";
-import { currencies } from "@/lib/currency";
+import { currencies, getCurrencyInfo } from "@/lib/currency";
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
@@ -42,7 +42,7 @@ export default function SettingsScreen() {
     savedTimer.current = setTimeout(() => setSaved(false), 1500);
   }
 
-  const selectedInfo = currencies.find((c) => c.code === selectedCurrency)!;
+  const selectedInfo = getCurrencyInfo(selectedCurrency);
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
