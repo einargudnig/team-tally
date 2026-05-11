@@ -1,0 +1,123 @@
+---
+import Base from "../layouts/Base.astro";
+
+const title = "Support — Team Tally";
+const description = "How to reach the team behind Team Tally and what to expect.";
+---
+
+<Base title={title} description={description}>
+  <main class="support">
+    <div class="container">
+      <a href="/" class="back-link">&larr; Back to Team Tally</a>
+
+      <h1>Support</h1>
+      <p class="last-updated">Last updated: May 11, 2026</p>
+
+      <section>
+        <h2>Contact</h2>
+        <p>
+          The fastest way to reach us is
+          <a href="mailto:team-tally@eggo.is">team-tally@eggo.is</a>.
+          Bug reports, feature requests, and "this saved my training group" stories all welcome.
+        </p>
+      </section>
+
+      <section>
+        <h2>What to expect</h2>
+        <p>
+          Team Tally is a small project, built and maintained outside business hours from
+          Iceland. Every email is read; replies usually come within a few days, sometimes
+          faster. Urgent issues (the app won't open, data is missing) are prioritised over
+          feature requests.
+        </p>
+      </section>
+
+      <section>
+        <h2>Common questions</h2>
+        <p>
+          <strong>Where is my data stored?</strong>
+          Locally on your device, in a private SQLite database. Nothing is sent anywhere — no
+          servers, no analytics, no backups. See the
+          <a href="/privacy">privacy policy</a> for the full story.
+        </p>
+        <p>
+          <strong>Can I sync between devices or share a team with co-captains?</strong>
+          Not in this version. Team Tally is offline-first by design — one device is the
+          source of truth. Multi-device sync is something we're considering for a future
+          release; if it matters for your team, send a note to the email above so we can
+          weigh it against other requests.
+        </p>
+        <p>
+          <strong>How do I delete everything?</strong>
+          Uninstall the app. The database lives in the app's sandbox, so removing the app
+          removes every fine, player, and team setting along with it. There's no cloud copy.
+        </p>
+        <p>
+          <strong>Can I change the currency or team name after I've started?</strong>
+          Yes — both live in the Settings tab and can be edited at any time without losing
+          any data.
+        </p>
+      </section>
+
+      <section>
+        <h2>Bug reports + feedback</h2>
+        <p>
+          When reporting an issue, including your device model, iOS version, and a short
+          description of what you did before the bug appeared helps us reproduce and fix it
+          faster. If the app crashes on launch, a screenshot of the error screen is the
+          single most useful thing you can send.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <style>
+    .support {
+      min-height: 100vh;
+      padding: 4rem 1.5rem;
+    }
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .back-link {
+      display: inline-block;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-bottom: 2rem;
+      transition: color 0.2s;
+    }
+    .back-link:hover {
+      color: var(--primary);
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .last-updated {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 2.5rem;
+    }
+    section {
+      margin-bottom: 2rem;
+    }
+    h2 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--primary-light);
+    }
+    p {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 0.75rem;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  </style>
+</Base>
