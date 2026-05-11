@@ -17,26 +17,24 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [isLoading, setIsLoading] = useState(true);
-  const [hasTeam, setHasTeam] = useState(false);
   const router = useRouter();
   const segments = useSegments();
 
   useEffect(() => {
-    const team = getTeam();
-    setHasTeam(!!team);
     setIsLoading(false);
     SplashScreen.hideAsync();
   }, []);
 
   useEffect(() => {
     if (isLoading) return;
+    const hasTeam = !!getTeam();
     const inOnboarding = segments[0] === "onboarding";
     if (!hasTeam && !inOnboarding) {
       router.replace("/onboarding");
     } else if (hasTeam && inOnboarding) {
       router.replace("/(tabs)");
     }
-  }, [isLoading, hasTeam, segments]);
+  }, [isLoading, segments]);
 
   if (isLoading) {
     return (
@@ -55,9 +53,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="add-fine"
           options={{
-            presentation: "formSheet",
-            sheetGrabberVisible: true,
-            sheetAllowedDetents: [1.0],
+            presentation: "modal",
             headerShown: true,
             title: "Add Fine",
             headerStyle: { backgroundColor: "#0f0f14" },
@@ -73,6 +69,7 @@ export default function RootLayout() {
             headerStyle: { backgroundColor: "#0f0f14" },
             headerTintColor: "#f5f5f5",
             headerShadowVisible: false,
+            headerBackButtonDisplayMode: "minimal",
             title: "Player",
           }}
         />

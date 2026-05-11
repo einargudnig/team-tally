@@ -35,3 +35,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Superpowers brainstorm sessions
 .superpowers/
+
+# App Store screenshots — regenerated locally, ASC owns the canonical copy
+apps/mobile/screenshots/

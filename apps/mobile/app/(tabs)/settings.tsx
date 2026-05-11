@@ -1,11 +1,12 @@
 import { useState, useCallback, useRef } from "react";
-import { KeyboardAvoidingView, StyleSheet } from "react-native";
+import { Alert, KeyboardAvoidingView, StyleSheet } from "react-native";
 import { View, Text, TextInput, Pressable, ScrollView } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { getTeam, updateTeam } from "@/db/queries";
 import { currencies, getCurrencyInfo } from "@/lib/currency";
+import { seedDemoData } from "@/lib/seed-demo";
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
@@ -125,6 +126,37 @@ export default function SettingsScreen() {
             {saved ? "✓ Saved" : "Save Changes"}
           </Text>
         </Pressable>
+
+        {__DEV__ && (
+          <Pressable
+            onPress={() => {
+              Alert.alert(
+                "Reset & seed demo data?",
+                "Wipes the database and loads Hraunsmenn FC with 6 players and ~35 fines. Dev builds only.",
+                [
+                  { text: "Cancel", style: "cancel" },
+                  {
+                    text: "Reset & seed",
+                    style: "destructive",
+                    onPress: () => {
+                      const { entryCount } = seedDemoData();
+                      if (process.env.EXPO_OS === "ios")
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                      loadData();
+                      Alert.alert("Seeded", `Loaded ${entryCount} fine entries.`);
+                    },
+                  },
+                ]
+              );
+            }}
+            accessibilityRole="button"
+            accessibilityLabel="Seed demo data (dev only)"
+            className="bg-card border border-border rounded-xl min-h-[44px] justify-center items-center mt-6 active:opacity-80"
+            style={styles.card}
+          >
+            <Text className="text-text-muted text-sm">Seed demo data (dev only)</Text>
+          </Pressable>
+        )}
       </ScrollView>
     </KeyboardAvoidingView>
   );

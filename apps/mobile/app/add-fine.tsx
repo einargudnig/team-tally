@@ -102,30 +102,28 @@ export default function AddFineScreen() {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "#0f0f14" }}
     >
-      <View className="flex-1 bg-surface">
-        <Stack.Screen
-          options={{
-            headerRight: () => (
-              <Pressable
-                onPress={() => router.back()}
-                accessibilityRole="button"
-                accessibilityLabel="Done"
-                hitSlop={8}
-              >
-                <Text className="text-primary text-base font-medium">Done</Text>
-              </Pressable>
-            ),
-          }}
-        />
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <Pressable
+              onPress={() => router.back()}
+              accessibilityRole="button"
+              accessibilityLabel="Done"
+              hitSlop={8}
+            >
+              <Text className="text-primary text-base font-medium">Done</Text>
+            </Pressable>
+          ),
+        }}
+      />
 
-        <ScrollView
-          className="flex-1"
-          contentInsetAdjustmentBehavior="automatic"
-          contentContainerClassName="px-5 pb-6"
-          keyboardShouldPersistTaps="handled"
-        >
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 24 }}
+        keyboardShouldPersistTaps="handled"
+      >
         {doubleDayActive && (
           <View
             className="mt-4 bg-primary rounded-xl px-4 py-3 flex-row items-center gap-2"
@@ -361,41 +359,40 @@ export default function AddFineScreen() {
           )}
         </View>
 
-        </ScrollView>
+      </ScrollView>
 
-        <View className="px-5 pt-3 pb-6 border-t border-border bg-surface">
-          {justAdded ? (
-            <View
-              className="bg-success rounded-2xl min-h-[48px] justify-center items-center"
-              style={styles.card}
+      <View className="px-5 pt-3 pb-6 border-t border-border bg-surface">
+        {justAdded ? (
+          <View
+            className="bg-success rounded-2xl min-h-[48px] justify-center items-center"
+            style={styles.card}
+          >
+            <Text className="text-white text-base font-bold">Added!</Text>
+          </View>
+        ) : (
+          <Pressable
+            onPress={handleConfirm}
+            disabled={!canConfirm}
+            accessibilityRole="button"
+            accessibilityLabel={
+              canConfirm && selectedMember && selectedFineType
+                ? `Fine ${selectedMember.name} ${formatAmount(selectedFineType.amount * multiplier, currency)}`
+                : "Select player and fine type"
+            }
+            className={`rounded-2xl min-h-[48px] justify-center items-center active:opacity-80 ${
+              canConfirm ? "bg-primary" : "bg-card border border-border"
+            }`}
+            style={styles.card}
+          >
+            <Text
+              className={`text-base font-bold ${canConfirm ? "text-surface" : "text-text-muted"}`}
             >
-              <Text className="text-white text-base font-bold">Added!</Text>
-            </View>
-          ) : (
-            <Pressable
-              onPress={handleConfirm}
-              disabled={!canConfirm}
-              accessibilityRole="button"
-              accessibilityLabel={
-                canConfirm && selectedMember && selectedFineType
-                  ? `Fine ${selectedMember.name} ${formatAmount(selectedFineType.amount * multiplier, currency)}`
-                  : "Select player and fine type"
-              }
-              className={`rounded-2xl min-h-[48px] justify-center items-center active:opacity-80 ${
-                canConfirm ? "bg-primary" : "bg-card border border-border"
-              }`}
-              style={styles.card}
-            >
-              <Text
-                className={`text-base font-bold ${canConfirm ? "text-surface" : "text-text-muted"}`}
-              >
-                {canConfirm && selectedMember && selectedFineType
-                  ? `Fine ${selectedMember.name} — ${formatAmount(selectedFineType.amount * multiplier, currency)}${doubleDayActive ? " (2×)" : ""}`
-                  : "Select player and fine type"}
-              </Text>
-            </Pressable>
-          )}
-        </View>
+              {canConfirm && selectedMember && selectedFineType
+                ? `Fine ${selectedMember.name} — ${formatAmount(selectedFineType.amount * multiplier, currency)}${doubleDayActive ? " (2×)" : ""}`
+                : "Select player and fine type"}
+            </Text>
+          </Pressable>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
