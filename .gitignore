@@ -36,5 +36,12 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # Superpowers brainstorm sessions
 .superpowers/
 
+# Agent / skill tooling artifacts (per-machine, not part of the project)
+.agents/
+.claude/
+.pi/
+.windsurf/
+skills/
+
 # App Store screenshots — regenerated locally, ASC owns the canonical copy
 apps/mobile/screenshots/
