@@ -45,6 +45,27 @@ export function updateTeam(id: string, data: { name?: string; currency?: string 
   db.update(teams).set(data).where(eq(teams.id, id)).run();
 }
 
+// === Onboarding ===
+
+export type OnboardingStep = "team" | "players" | "fines" | "first-fine";
+
+export function isOnboardingComplete(): boolean {
+  const team = getTeam();
+  return !!team?.onboardingCompletedAt;
+}
+
+export function markOnboardingComplete(teamId: string) {
+  db.update(teams).set({ onboardingCompletedAt: new Date() }).where(eq(teams.id, teamId)).run();
+}
+
+export function getOnboardingResumeStep(): OnboardingStep {
+  const team = getTeam();
+  if (!team) return "team";
+  if (getMembers(team.id).length === 0) return "players";
+  if (getFineTypes(team.id).length === 0) return "fines";
+  return "first-fine";
+}
+
 // === Members ===
 
 export function getMembers(teamId: string) {

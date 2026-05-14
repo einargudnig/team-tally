@@ -2,21 +2,28 @@ import { useState } from "react";
 import { KeyboardAvoidingView, StyleSheet } from "react-native";
 import { View, Text, TextInput, Pressable, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
-import { createTeam } from "@/db/queries";
+import { getTeam, createTeam, updateTeam } from "@/db/queries";
 import { currencies, getCurrencyInfo } from "@/lib/currency";
+import { OnboardingProgress } from "@/components/onboarding-progress";
 
-export default function OnboardingScreen() {
+export default function OnboardingTeamScreen() {
   const router = useRouter();
-  const [teamName, setTeamName] = useState("");
-  const [selectedCurrency, setSelectedCurrency] = useState("ISK");
+  const existing = getTeam();
+  const [teamName, setTeamName] = useState(existing?.name ?? "");
+  const [selectedCurrency, setSelectedCurrency] = useState(existing?.currency ?? "ISK");
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
 
   const selectedInfo = getCurrencyInfo(selectedCurrency);
 
   function handleContinue() {
-    if (!teamName.trim()) return;
-    createTeam(teamName.trim(), selectedCurrency);
-    router.replace("/(tabs)/players");
+    const trimmed = teamName.trim();
+    if (!trimmed) return;
+    if (existing) {
+      updateTeam(existing.id, { name: trimmed, currency: selectedCurrency });
+    } else {
+      createTeam(trimmed, selectedCurrency);
+    }
+    router.replace("/onboarding/players" as never);
   }
 
   return (
@@ -27,6 +34,10 @@ export default function OnboardingScreen() {
         contentContainerClassName="px-5"
         keyboardShouldPersistTaps="handled"
       >
+        <View className="pt-12 pb-8">
+          <OnboardingProgress step={1} />
+        </View>
+
         <View className="items-center mb-10">
           <Text className="text-5xl mb-4">⚽</Text>
           <Text className="text-text-primary text-2xl font-bold mb-2">

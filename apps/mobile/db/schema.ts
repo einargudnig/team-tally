@@ -7,6 +7,7 @@ export const teams = sqliteTable("teams", {
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
   doubleDayDate: text("double_day_date"),
   lastMonthlyRunAt: text("last_monthly_run_at"),
+  onboardingCompletedAt: integer("onboarding_completed_at", { mode: "timestamp_ms" }),
 });
 
 export const members = sqliteTable("members", {

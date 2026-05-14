@@ -11,7 +11,8 @@ expoDb.execSync(`
     currency TEXT NOT NULL DEFAULT 'USD',
     created_at INTEGER NOT NULL,
     double_day_date TEXT,
-    last_monthly_run_at TEXT
+    last_monthly_run_at TEXT,
+    onboarding_completed_at INTEGER
   );
   CREATE TABLE IF NOT EXISTS members (
     id TEXT PRIMARY KEY NOT NULL,
@@ -43,10 +44,11 @@ expoDb.execSync(`
   );
 `);
 
-function addColumnIfMissing(table: string, column: string, ddl: string) {
+function addColumnIfMissing(table: string, column: string, ddl: string, onAdded?: () => void) {
   const cols = expoDb.getAllSync<{ name: string }>(`PRAGMA table_info(${table})`);
   if (!cols.some((c) => c.name === column)) {
     expoDb.execSync(`ALTER TABLE ${table} ADD COLUMN ${ddl}`);
+    onAdded?.();
   }
 }
 
@@ -54,5 +56,11 @@ addColumnIfMissing("teams", "double_day_date", "double_day_date TEXT");
 addColumnIfMissing("teams", "last_monthly_run_at", "last_monthly_run_at TEXT");
 addColumnIfMissing("fine_types", "cadence", "cadence TEXT NOT NULL DEFAULT 'one_off'");
 addColumnIfMissing("fine_entries", "multiplier", "multiplier INTEGER NOT NULL DEFAULT 1");
+addColumnIfMissing("teams", "onboarding_completed_at", "onboarding_completed_at INTEGER", () => {
+  // Teams predating onboarding tracking are treated as graduated.
+  expoDb.execSync(
+    `UPDATE teams SET onboarding_completed_at = created_at WHERE onboarding_completed_at IS NULL`
+  );
+});
 
 export const db = drizzle(expoDb, { schema });

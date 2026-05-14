@@ -81,8 +81,7 @@ export default function HomeScreen() {
 
   function toggleDoubleDay() {
     if (!data) return;
-    if (process.env.EXPO_OS === "ios")
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (process.env.EXPO_OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setDoubleDay(data.teamId, !data.doubleDayActive);
     loadData();
   }
@@ -161,9 +160,7 @@ export default function HomeScreen() {
               Double day {doubleDayActive ? "on" : "off"}
             </Text>
           </View>
-          <Text
-            className={`text-xs ${doubleDayActive ? "text-surface/80" : "text-text-muted"}`}
-          >
+          <Text className={`text-xs ${doubleDayActive ? "text-surface/80" : "text-text-muted"}`}>
             {doubleDayActive ? "All fines ×2 today" : "Tap to enable"}
           </Text>
         </Pressable>
@@ -220,7 +217,7 @@ export default function HomeScreen() {
             <TrendingUp size={40} color="#8b8fa3" strokeWidth={1.5} />
             <Text className="text-text-secondary text-base font-medium mt-4">No fines yet</Text>
             <Text className="text-text-muted text-sm mt-1 text-center">
-              Tap the + button to record the first one
+              Log a fine to see your team's leaderboard come alive
             </Text>
           </View>
         )}

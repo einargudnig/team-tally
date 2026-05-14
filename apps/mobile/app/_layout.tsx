@@ -5,7 +5,7 @@ import { ActivityIndicator } from "react-native";
 import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
-import { getTeam } from "@/db/queries";
+import { getTeam, getOnboardingResumeStep } from "@/db/queries";
 import { ErrorScreen } from "@/components/error-screen";
 
 export function ErrorBoundary({ error, retry }: { error: Error; retry: () => void }) {
@@ -14,6 +14,14 @@ export function ErrorBoundary({ error, retry }: { error: Error; retry: () => voi
 }
 
 SplashScreen.preventAutoHideAsync();
+
+// Onboarding step paths — generated route types regenerate when Metro starts.
+const RESUME_PATHS: Record<string, string> = {
+  team: "/onboarding",
+  players: "/onboarding/players",
+  fines: "/onboarding/fines",
+  "first-fine": "/onboarding/first-fine",
+};
 
 export default function RootLayout() {
   const [isLoading, setIsLoading] = useState(true);
@@ -27,11 +35,13 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (isLoading) return;
-    const hasTeam = !!getTeam();
+    const team = getTeam();
+    const isComplete = !!team?.onboardingCompletedAt;
     const inOnboarding = segments[0] === "onboarding";
-    if (!hasTeam && !inOnboarding) {
-      router.replace("/onboarding");
-    } else if (hasTeam && inOnboarding) {
+    if (!isComplete && !inOnboarding) {
+      const step = getOnboardingResumeStep();
+      router.replace(RESUME_PATHS[step] as never);
+    } else if (isComplete && inOnboarding) {
       router.replace("/(tabs)");
     }
   }, [isLoading, segments]);
