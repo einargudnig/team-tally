@@ -4,9 +4,13 @@ import { View, Text, TextInput, Pressable, ScrollView } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
+import Constants from "expo-constants";
 import { getTeam, updateTeam } from "@/db/queries";
 import { currencies, getCurrencyInfo } from "@/lib/currency";
 import { seedDemoData } from "@/lib/seed-demo";
+
+const APP_VERSION = Constants.expoConfig?.version ?? "—";
+const BUILD_NUMBER = Constants.nativeBuildVersion ?? null;
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
@@ -127,6 +131,13 @@ export default function SettingsScreen() {
           </Text>
         </Pressable>
 
+        <View className="mt-8 items-center">
+          <Text className="text-text-muted text-xs" style={styles.amount}>
+            Team Tally v{APP_VERSION}
+            {BUILD_NUMBER ? ` (build ${BUILD_NUMBER})` : ""}
+          </Text>
+        </View>
+
         {__DEV__ && (
           <Pressable
             onPress={() => {
@@ -165,4 +176,5 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   scrollContent: { flexGrow: 1, paddingBottom: 32 },
   card: { borderCurve: "continuous" },
+  amount: { fontVariant: ["tabular-nums"] },
 });
