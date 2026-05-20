@@ -174,6 +174,36 @@ export function deleteFineEntry(id: string) {
   db.delete(fineEntries).where(eq(fineEntries.id, id)).run();
 }
 
+export function getFineEntry(id: string) {
+  return db.select().from(fineEntries).where(eq(fineEntries.id, id)).get() ?? null;
+}
+
+export function updateFineEntry(
+  id: string,
+  data: { fineTypeId?: string; memberId?: string; date?: string; multiplier?: number }
+) {
+  db.update(fineEntries).set(data).where(eq(fineEntries.id, id)).run();
+}
+
+export function updateFineType(
+  id: string,
+  data: {
+    name?: string;
+    description?: string | null;
+    amount?: number;
+    cadence?: Cadence;
+    memberIds?: string[];
+  }
+) {
+  const { memberIds, ...rest } = data;
+  if (Object.keys(rest).length > 0) {
+    db.update(fineTypes).set(rest).where(eq(fineTypes.id, id)).run();
+  }
+  if (memberIds !== undefined) {
+    setMonthlyFineMembers(id, memberIds);
+  }
+}
+
 // === Double day ===
 
 export function isDoubleDayActive(team: { doubleDayDate: string | null }) {

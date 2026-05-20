@@ -13,8 +13,10 @@ import {
   isDoubleDayActive,
   setDoubleDay,
   applyMonthlyFines,
+  deleteFineEntry,
 } from "@/db/queries";
 import { formatAmount } from "@/lib/currency";
+import { showEditDeleteSheet } from "@/lib/action-sheet";
 import { LeaderboardItem } from "@/components/leaderboard-item";
 import { FineActivityItem } from "@/components/fine-activity-item";
 import { Logo } from "@/components/logo";
@@ -90,6 +92,21 @@ export default function HomeScreen() {
     setRefreshing(true);
     loadData();
     setRefreshing(false);
+  }
+
+  function handleActivityPress(entry: ActivityEntry) {
+    if (process.env.EXPO_OS === "ios") Haptics.selectionAsync();
+    showEditDeleteSheet({
+      title: `${entry.memberName} — ${entry.fineTypeName}`,
+      destructiveMessage: `Remove this fine from ${entry.memberName}?`,
+      onEdit: () => router.push(`/edit-fine/${entry.id}` as never),
+      onDelete: () => {
+        deleteFineEntry(entry.id);
+        if (process.env.EXPO_OS === "ios")
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        loadData();
+      },
+    });
   }
 
   if (!data) {
@@ -208,6 +225,7 @@ export default function HomeScreen() {
                   fineTypeName={entry.fineTypeName}
                   amount={formatAmount(entry.amount, currency)}
                   date={formatRelativeDate(entry.date)}
+                  onPress={() => handleActivityPress(entry)}
                 />
               ))}
             </View>

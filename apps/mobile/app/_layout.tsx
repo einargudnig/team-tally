@@ -73,6 +73,18 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
+          name="edit-fine/[id]"
+          options={{
+            presentation: "modal",
+            headerShown: true,
+            title: "Edit Fine",
+            headerStyle: { backgroundColor: "#0f0f14" },
+            headerTintColor: "#f5f5f5",
+            headerShadowVisible: false,
+            contentStyle: { backgroundColor: "#0f0f14" },
+          }}
+        />
+        <Stack.Screen
           name="player/[id]"
           options={{
             headerShown: true,

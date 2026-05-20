@@ -1,11 +1,12 @@
 import { useState, useCallback } from "react";
-import { Alert, StyleSheet } from "react-native";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { StyleSheet } from "react-native";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useFocusEffect } from "expo-router";
 import { View, Text, ScrollView, Pressable } from "react-native";
 import * as Haptics from "expo-haptics";
 import { getTeam, getMembers, getPlayerDetail, deleteFineEntry } from "@/db/queries";
 import { formatAmount } from "@/lib/currency";
+import { showEditDeleteSheet } from "@/lib/action-sheet";
 import { PlayerAvatar } from "@/components/player-avatar";
 
 type BreakdownItem = {
@@ -18,6 +19,7 @@ type BreakdownItem = {
 type HistoryItem = { id: string; fineTypeName: string; date: string; amount: number };
 
 export default function PlayerDetailScreen() {
+  const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const [currency, setCurrency] = useState("USD");
@@ -45,21 +47,19 @@ export default function PlayerDetailScreen() {
     setTotalAmount(detail.breakdown.reduce((sum, b) => sum + b.subtotal, 0));
   }
 
-  function handleDeleteEntry(entryId: string) {
-    if (process.env.EXPO_OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    Alert.alert("Delete Fine", "Remove this fine entry?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: () => {
-          deleteFineEntry(entryId);
-          if (process.env.EXPO_OS === "ios")
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-          loadData();
-        },
+  function handleEntryPress(entry: HistoryItem) {
+    if (process.env.EXPO_OS === "ios") Haptics.selectionAsync();
+    showEditDeleteSheet({
+      title: entry.fineTypeName,
+      destructiveMessage: "Remove this fine entry?",
+      onEdit: () => router.push(`/edit-fine/${entry.id}` as never),
+      onDelete: () => {
+        deleteFineEntry(entry.id);
+        if (process.env.EXPO_OS === "ios")
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        loadData();
       },
-    ]);
+    });
   }
 
   return (
@@ -128,9 +128,9 @@ export default function PlayerDetailScreen() {
               {history.map((entry) => (
                 <Pressable
                   key={entry.id}
-                  onLongPress={() => handleDeleteEntry(entry.id)}
+                  onPress={() => handleEntryPress(entry)}
                   accessibilityRole="button"
-                  accessibilityHint="Long press to delete"
+                  accessibilityHint="Tap for edit and delete options"
                   className="flex-row items-center justify-between min-h-[44px] py-3 border-b border-border active:opacity-70"
                 >
                   <View className="flex-1 mr-3">

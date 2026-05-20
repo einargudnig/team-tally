@@ -1,10 +1,11 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 
 interface FineActivityItemProps {
   memberName: string;
   fineTypeName: string;
   amount: string;
   date: string;
+  onPress?: () => void;
 }
 
 export function FineActivityItem({
@@ -12,9 +13,10 @@ export function FineActivityItem({
   fineTypeName,
   amount,
   date,
+  onPress,
 }: FineActivityItemProps) {
-  return (
-    <View className="flex-row items-center min-h-[44px] py-3 border-b border-border">
+  const content = (
+    <>
       <View className="flex-1">
         <Text className="text-text-primary text-sm">
           <Text className="font-semibold">{memberName}</Text>
@@ -25,11 +27,30 @@ export function FineActivityItem({
       </View>
       <Text
         className="text-danger text-sm font-medium"
-        selectable
+        selectable={!onPress}
         style={{ fontVariant: ["tabular-nums"] }}
       >
         {amount}
       </Text>
+    </>
+  );
+
+  if (onPress) {
+    return (
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityHint="Tap for edit and delete options"
+        className="flex-row items-center min-h-[44px] py-3 border-b border-border active:opacity-70"
+      >
+        {content}
+      </Pressable>
+    );
+  }
+
+  return (
+    <View className="flex-row items-center min-h-[44px] py-3 border-b border-border">
+      {content}
     </View>
   );
 }

@@ -17,10 +17,12 @@ import {
   getFineTypes,
   createFineType,
   deleteFineType,
+  updateFineType,
   getMembers,
   getMonthlyFineMemberIds,
 } from "@/db/queries";
 import { formatAmount } from "@/lib/currency";
+import { showEditDeleteSheet } from "@/lib/action-sheet";
 import { MemberChip } from "@/components/member-chip";
 
 type FineType = {
@@ -45,6 +47,7 @@ export default function FinesScreen() {
   const [allMembers, setAllMembers] = useState<Member[]>([]);
   const [monthlyMembersByType, setMonthlyMembersByType] = useState<Record<string, string[]>>({});
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
@@ -81,24 +84,30 @@ export default function FinesScreen() {
     setRefreshing(false);
   }
 
-  function handleAdd() {
-    if (!teamId) return;
+  function validateForm(): { name: string; amount: number } | null {
+    if (!teamId) return null;
     const trimmedName = name.trim();
     const parsedAmount = parseInt(amount, 10);
     if (!trimmedName) {
       Alert.alert("Validation", "Name is required.");
-      return;
+      return null;
     }
     if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) {
       Alert.alert("Validation", "A valid amount is required.");
-      return;
+      return null;
     }
     if (cadence === "monthly" && selectedMemberIds.length === 0) {
       Alert.alert("Validation", "Monthly fines need at least one player selected.");
-      return;
+      return null;
     }
+    return { name: trimmedName, amount: parsedAmount };
+  }
 
-    createFineType(teamId, trimmedName, parsedAmount, {
+  function handleAdd() {
+    const validated = validateForm();
+    if (!validated || !teamId) return;
+
+    createFineType(teamId, validated.name, validated.amount, {
       description: description.trim() || undefined,
       cadence,
       memberIds: cadence === "monthly" ? selectedMemberIds : undefined,
@@ -107,6 +116,42 @@ export default function FinesScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     resetForm();
     loadData();
+  }
+
+  function handleSaveEdit() {
+    const validated = validateForm();
+    if (!validated || !editingId) return;
+    const original = fineTypesList.find((ft) => ft.id === editingId);
+    if (!original) return;
+
+    const commit = () => {
+      updateFineType(editingId, {
+        name: validated.name,
+        description: description.trim() || null,
+        amount: validated.amount,
+        cadence,
+        memberIds: cadence === "monthly" ? selectedMemberIds : [],
+      });
+      if (process.env.EXPO_OS === "ios")
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      resetForm();
+      loadData();
+    };
+
+    if (validated.amount !== original.amount) {
+      const direction = validated.amount > original.amount ? "increase" : "decrease";
+      Alert.alert(
+        "Rewriting history",
+        `Past fines using "${original.name}" will ${direction} to ${formatAmount(validated.amount, currency)} each. Continue?`,
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Save", style: "destructive", onPress: commit },
+        ]
+      );
+      return;
+    }
+
+    commit();
   }
 
   function handleCancel() {
@@ -120,6 +165,19 @@ export default function FinesScreen() {
     setCadence("one_off");
     setSelectedMemberIds([]);
     setShowForm(false);
+    setEditingId(null);
+  }
+
+  function openEdit(item: FineType) {
+    setEditingId(item.id);
+    setName(item.name);
+    setDescription(item.description ?? "");
+    setAmount(String(item.amount));
+    setCadence(item.cadence);
+    setSelectedMemberIds(
+      item.cadence === "monthly" ? (monthlyMembersByType[item.id] ?? []) : []
+    );
+    setShowForm(true);
   }
 
   function toggleMember(id: string) {
@@ -128,23 +186,19 @@ export default function FinesScreen() {
     );
   }
 
-  function handleLongPress(item: FineType) {
-    if (process.env.EXPO_OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    Alert.alert(
-      "Delete Fine Type",
-      `Delete "${item.name}"? This will also remove all fine entries using it.`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => {
-            deleteFineType(item.id);
-            loadData();
-          },
-        },
-      ]
-    );
+  function handleRowPress(item: FineType) {
+    if (process.env.EXPO_OS === "ios") Haptics.selectionAsync();
+    showEditDeleteSheet({
+      title: item.name,
+      destructiveMessage: `Delete "${item.name}"? This also removes all fine entries using it.`,
+      onEdit: () => openEdit(item),
+      onDelete: () => {
+        deleteFineType(item.id);
+        if (process.env.EXPO_OS === "ios")
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        loadData();
+      },
+    });
   }
 
   const renderItem = useCallback(
@@ -153,9 +207,9 @@ export default function FinesScreen() {
       const monthlyCount = isMonthly ? (monthlyMembersByType[item.id]?.length ?? 0) : 0;
       return (
         <Pressable
-          onLongPress={() => handleLongPress(item)}
+          onPress={() => handleRowPress(item)}
           accessibilityRole="button"
-          accessibilityHint="Long press to delete"
+          accessibilityHint="Tap for edit and delete options"
           className="flex-row justify-between items-center min-h-[44px] py-3 border-b border-border active:opacity-70"
         >
           <View className="flex-1 mr-3">
@@ -291,11 +345,13 @@ export default function FinesScreen() {
                   <Text className="text-text-secondary text-base font-medium">Cancel</Text>
                 </Pressable>
                 <Pressable
-                  onPress={handleAdd}
+                  onPress={editingId ? handleSaveEdit : handleAdd}
                   accessibilityRole="button"
                   className="flex-1 bg-primary rounded-lg min-h-[44px] justify-center items-center active:opacity-80"
                 >
-                  <Text className="text-surface text-base font-semibold">Add</Text>
+                  <Text className="text-surface text-base font-semibold">
+                    {editingId ? "Save" : "Add"}
+                  </Text>
                 </Pressable>
               </View>
             </View>
