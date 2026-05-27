@@ -1,6 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "./client";
-import { teams, members, fineTypes, fineEntries, monthlyFineMembers } from "./schema";
+import { teams, members, fineTypes, fineEntries, monthlyFineMembers, payments } from "./schema";
+import { derivePaymentStatus, type Interval, type Period, type PaymentStatus } from "@/lib/period";
 import * as crypto from "expo-crypto";
 
 type Cadence = "one_off" | "monthly";
@@ -41,7 +42,10 @@ export function createTeam(name: string, currency: string) {
   return id;
 }
 
-export function updateTeam(id: string, data: { name?: string; currency?: string }) {
+export function updateTeam(
+  id: string,
+  data: { name?: string; currency?: string; fineInterval?: Interval }
+) {
   db.update(teams).set(data).where(eq(teams.id, id)).run();
 }
 
@@ -87,6 +91,8 @@ export function createMember(teamId: string, name: string) {
 
 export function deleteMember(id: string) {
   db.delete(fineEntries).where(eq(fineEntries.memberId, id)).run();
+  db.delete(payments).where(eq(payments.memberId, id)).run();
+  db.delete(monthlyFineMembers).where(eq(monthlyFineMembers.memberId, id)).run();
   db.delete(members).where(eq(members.id, id)).run();
 }
 
@@ -338,6 +344,83 @@ export function getTotalOutstanding(teamId: string) {
     WHERE m.team_id = ${teamId}
   `);
   return result?.total ?? 0;
+}
+
+// === Period payments ===
+
+export type PeriodLeaderboardEntry = {
+  memberId: string;
+  memberName: string;
+  total: number; // owed for this period
+  amountPaid: number; // snapshot recorded when marked paid (0 if never)
+  remaining: number; // still owed for this period
+  status: PaymentStatus;
+};
+
+/**
+ * Per-player standing for a single period: how much each owes within the
+ * period's date window, how much they've been marked as paying, and the derived
+ * status. Sorted with the biggest outstanding balances first so the collector
+ * sees who still owes; fully-paid players sink to the bottom.
+ */
+export function getPeriodLeaderboard(teamId: string, period: Period): PeriodLeaderboardEntry[] {
+  const totals = db.all<{ memberId: string; memberName: string; total: number }>(sql`
+    SELECT
+      m.id as memberId,
+      m.name as memberName,
+      COALESCE(SUM(ft.amount * fe.multiplier), 0) as total
+    FROM members m
+    LEFT JOIN fine_entries fe
+      ON fe.member_id = m.id AND fe.date >= ${period.start} AND fe.date <= ${period.end}
+    LEFT JOIN fine_types ft ON ft.id = fe.fine_type_id
+    WHERE m.team_id = ${teamId}
+    GROUP BY m.id, m.name
+  `);
+
+  const paidRows = db
+    .select({ memberId: payments.memberId, amountPaid: payments.amountPaid })
+    .from(payments)
+    .where(eq(payments.periodKey, period.key))
+    .all();
+  const paidByMember = new Map(paidRows.map((r) => [r.memberId, r.amountPaid]));
+
+  return totals
+    .map((row) => {
+      const amountPaid = paidByMember.get(row.memberId) ?? 0;
+      const { status, remaining } = derivePaymentStatus(row.total, amountPaid);
+      return { ...row, amountPaid, remaining, status };
+    })
+    .sort((a, b) => b.remaining - a.remaining || b.total - a.total);
+}
+
+/** Total still owed across all players for the period (sum of remaining). */
+export function getPeriodOutstanding(teamId: string, period: Period): number {
+  return getPeriodLeaderboard(teamId, period).reduce((sum, e) => sum + e.remaining, 0);
+}
+
+/** Mark a player as paid for the period, snapshotting the current amount owed. */
+export function markPeriodPaid(memberId: string, period: Period, amount: number) {
+  db.insert(payments)
+    .values({
+      id: uuid(),
+      memberId,
+      periodKey: period.key,
+      interval: period.interval,
+      amountPaid: amount,
+      paidAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: [payments.memberId, payments.periodKey],
+      set: { amountPaid: amount, interval: period.interval, paidAt: new Date() },
+    })
+    .run();
+}
+
+/** Undo a payment mark for a player in a period. */
+export function markPeriodUnpaid(memberId: string, periodKey: string) {
+  db.delete(payments)
+    .where(and(eq(payments.memberId, memberId), eq(payments.periodKey, periodKey)))
+    .run();
 }
 
 export function getPlayerDetail(memberId: string) {

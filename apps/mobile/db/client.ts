@@ -42,6 +42,15 @@ expoDb.execSync(`
     member_id TEXT NOT NULL REFERENCES members(id),
     PRIMARY KEY (fine_type_id, member_id)
   );
+  CREATE TABLE IF NOT EXISTS payments (
+    id TEXT PRIMARY KEY NOT NULL,
+    member_id TEXT NOT NULL REFERENCES members(id),
+    period_key TEXT NOT NULL,
+    interval TEXT NOT NULL,
+    amount_paid INTEGER NOT NULL,
+    paid_at INTEGER NOT NULL,
+    UNIQUE (member_id, period_key)
+  );
 `);
 
 function addColumnIfMissing(table: string, column: string, ddl: string, onAdded?: () => void) {
@@ -56,6 +65,11 @@ addColumnIfMissing("teams", "double_day_date", "double_day_date TEXT");
 addColumnIfMissing("teams", "last_monthly_run_at", "last_monthly_run_at TEXT");
 addColumnIfMissing("fine_types", "cadence", "cadence TEXT NOT NULL DEFAULT 'one_off'");
 addColumnIfMissing("fine_entries", "multiplier", "multiplier INTEGER NOT NULL DEFAULT 1");
+addColumnIfMissing(
+  "teams",
+  "fine_interval",
+  "fine_interval TEXT NOT NULL DEFAULT 'monthly'"
+);
 addColumnIfMissing("teams", "onboarding_completed_at", "onboarding_completed_at INTEGER", () => {
   // Teams predating onboarding tracking are treated as graduated.
   expoDb.execSync(

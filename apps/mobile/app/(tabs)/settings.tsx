@@ -7,6 +7,7 @@ import * as Haptics from "expo-haptics";
 import Constants from "expo-constants";
 import { getTeam, updateTeam } from "@/db/queries";
 import { currencies, getCurrencyInfo } from "@/lib/currency";
+import { INTERVAL_OPTIONS, type Interval } from "@/lib/period";
 import { seedDemoData } from "@/lib/seed-demo";
 
 const APP_VERSION = Constants.expoConfig?.version ?? "—";
@@ -17,6 +18,7 @@ export default function SettingsScreen() {
   const [teamId, setTeamId] = useState<string | null>(null);
   const [teamName, setTeamName] = useState("");
   const [selectedCurrency, setSelectedCurrency] = useState("ISK");
+  const [selectedInterval, setSelectedInterval] = useState<Interval>("monthly");
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
   const [saved, setSaved] = useState(false);
   const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -36,11 +38,16 @@ export default function SettingsScreen() {
     setTeamId(team.id);
     setTeamName(team.name);
     setSelectedCurrency(team.currency);
+    setSelectedInterval(team.fineInterval);
   }
 
   function handleSave() {
     if (!teamId || !teamName.trim()) return;
-    updateTeam(teamId, { name: teamName.trim(), currency: selectedCurrency });
+    updateTeam(teamId, {
+      name: teamName.trim(),
+      currency: selectedCurrency,
+      fineInterval: selectedInterval,
+    });
     if (process.env.EXPO_OS === "ios")
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setSaved(true);
@@ -113,6 +120,40 @@ export default function SettingsScreen() {
             </ScrollView>
           </View>
         )}
+
+        <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mb-2">
+          Payment Interval
+        </Text>
+        <View className="flex-row gap-2 mb-1">
+          {INTERVAL_OPTIONS.map((opt) => {
+            const active = opt.value === selectedInterval;
+            return (
+              <Pressable
+                key={opt.value}
+                onPress={() => {
+                  setSelectedInterval(opt.value);
+                  if (process.env.EXPO_OS === "ios") Haptics.selectionAsync();
+                }}
+                accessibilityRole="button"
+                accessibilityState={{ selected: active }}
+                accessibilityLabel={`${opt.label} interval`}
+                className={`flex-1 rounded-xl min-h-[44px] justify-center items-center border active:opacity-70 ${
+                  active ? "bg-primary border-primary" : "bg-card border-border"
+                }`}
+                style={styles.card}
+              >
+                <Text
+                  className={`text-sm font-semibold ${active ? "text-surface" : "text-text-primary"}`}
+                >
+                  {opt.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+        <Text className="text-text-muted text-xs mb-6">
+          How the overview groups fines for collecting payments.
+        </Text>
 
         <Pressable
           onPress={handleSave}

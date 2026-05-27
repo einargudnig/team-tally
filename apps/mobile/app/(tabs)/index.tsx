@@ -2,22 +2,32 @@ import { ScrollView, View, Text, Pressable, RefreshControl, StyleSheet } from "r
 import { useCallback, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Plus, TrendingUp } from "lucide-react-native";
+import { Plus, TrendingUp, ChevronLeft, ChevronRight, Check } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import {
   getTeam,
-  getLeaderboard,
   getRecentActivity,
-  getTotalOutstanding,
   getMembers,
   isDoubleDayActive,
   setDoubleDay,
   applyMonthlyFines,
   deleteFineEntry,
+  getPeriodLeaderboard,
+  getPeriodOutstanding,
+  markPeriodPaid,
+  markPeriodUnpaid,
+  type PeriodLeaderboardEntry,
 } from "@/db/queries";
+import {
+  currentPeriod,
+  previousPeriod,
+  nextPeriod,
+  isCurrentPeriod,
+  type Period,
+} from "@/lib/period";
 import { formatAmount } from "@/lib/currency";
-import { showEditDeleteSheet } from "@/lib/action-sheet";
-import { LeaderboardItem } from "@/components/leaderboard-item";
+import { showEditDeleteSheet, showActionSheet } from "@/lib/action-sheet";
+import { PlayerAvatar } from "@/components/player-avatar";
 import { FineActivityItem } from "@/components/fine-activity-item";
 import { Logo } from "@/components/logo";
 
@@ -30,7 +40,6 @@ function formatRelativeDate(dateStr: string): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-type LeaderboardEntry = { memberId: string; memberName: string; total: number };
 type ActivityEntry = {
   id: string;
   memberName: string;
@@ -43,8 +52,8 @@ type HomeData = {
   teamName: string;
   currency: string;
   playerCount: number;
-  totalOutstanding: number;
-  leaderboard: LeaderboardEntry[];
+  periodOutstanding: number;
+  leaderboard: PeriodLeaderboardEntry[];
   recentActivity: ActivityEntry[];
   doubleDayActive: boolean;
 };
@@ -53,6 +62,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [data, setData] = useState<HomeData | null>(null);
+  const [period, setPeriod] = useState<Period | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
@@ -61,7 +71,7 @@ export default function HomeScreen() {
     }, [])
   );
 
-  function loadData() {
+  function loadData(targetPeriod?: Period) {
     const team = getTeam();
     if (!team) {
       setData(null);
@@ -69,16 +79,28 @@ export default function HomeScreen() {
     }
     applyMonthlyFines(team.id);
     const fresh = getTeam()!;
+
+    // Reset to the live period whenever the team has no period yet or the
+    // configured interval changed under us (e.g. switched in settings).
+    let p = targetPeriod ?? period;
+    if (!p || p.interval !== fresh.fineInterval) p = currentPeriod(fresh.fineInterval);
+    setPeriod(p);
+
     setData({
       teamId: fresh.id,
       teamName: fresh.name,
       currency: fresh.currency,
       playerCount: getMembers(fresh.id).length,
-      totalOutstanding: getTotalOutstanding(fresh.id),
-      leaderboard: getLeaderboard(fresh.id),
+      periodOutstanding: getPeriodOutstanding(fresh.id, p),
+      leaderboard: getPeriodLeaderboard(fresh.id, p),
       recentActivity: getRecentActivity(fresh.id),
       doubleDayActive: isDoubleDayActive(fresh),
     });
+  }
+
+  function goToPeriod(target: Period) {
+    if (process.env.EXPO_OS === "ios") Haptics.selectionAsync();
+    loadData(target);
   }
 
   function toggleDoubleDay() {
@@ -92,6 +114,36 @@ export default function HomeScreen() {
     setRefreshing(true);
     loadData();
     setRefreshing(false);
+  }
+
+  function handlePlayerPress(entry: PeriodLeaderboardEntry) {
+    if (!period) return;
+    if (process.env.EXPO_OS === "ios") Haptics.selectionAsync();
+    const paidAction =
+      entry.status === "paid"
+        ? {
+            label: "Mark as unpaid",
+            destructive: true,
+            onPress: () => {
+              markPeriodUnpaid(entry.memberId, period.key);
+              if (process.env.EXPO_OS === "ios")
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+              loadData();
+            },
+          }
+        : {
+            label: `Mark paid · ${formatAmount(entry.remaining, data!.currency)}`,
+            onPress: () => {
+              markPeriodPaid(entry.memberId, period, entry.total);
+              if (process.env.EXPO_OS === "ios")
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+              loadData();
+            },
+          };
+    showActionSheet(`${entry.memberName} · ${period.label}`, undefined, [
+      paidAction,
+      { label: "View player details", onPress: () => router.push(`/player/${entry.memberId}`) },
+    ]);
   }
 
   function handleActivityPress(entry: ActivityEntry) {
@@ -109,7 +161,7 @@ export default function HomeScreen() {
     });
   }
 
-  if (!data) {
+  if (!data || !period) {
     return (
       <View className="flex-1 items-center justify-center bg-surface">
         <Text className="text-text-muted text-base">No team set up yet.</Text>
@@ -117,16 +169,10 @@ export default function HomeScreen() {
     );
   }
 
-  const {
-    teamName,
-    currency,
-    playerCount,
-    totalOutstanding,
-    leaderboard,
-    recentActivity,
-    doubleDayActive,
-  } = data;
+  const { teamName, currency, playerCount, periodOutstanding, leaderboard, recentActivity, doubleDayActive } =
+    data;
   const hasFines = recentActivity.length > 0;
+  const atCurrent = isCurrentPeriod(period);
 
   return (
     <View className="flex-1 bg-surface">
@@ -151,6 +197,31 @@ export default function HomeScreen() {
           <View className="mt-1">
             <Logo size={32} />
           </View>
+        </View>
+
+        {/* Period selector */}
+        <View className="mx-5 mt-4 flex-row items-center justify-between bg-card border border-border rounded-xl px-2 min-h-[48px]" style={styles.card}>
+          <Pressable
+            onPress={() => goToPeriod(previousPeriod(period))}
+            accessibilityRole="button"
+            accessibilityLabel="Previous period"
+            hitSlop={8}
+            className="w-10 h-10 items-center justify-center active:opacity-60"
+          >
+            <ChevronLeft size={22} color="#f5f5f5" />
+          </Pressable>
+          <Text className="text-text-primary text-base font-semibold">{period.label}</Text>
+          <Pressable
+            onPress={() => !atCurrent && goToPeriod(nextPeriod(period))}
+            disabled={atCurrent}
+            accessibilityRole="button"
+            accessibilityLabel="Next period"
+            accessibilityState={{ disabled: atCurrent }}
+            hitSlop={8}
+            className="w-10 h-10 items-center justify-center active:opacity-60"
+          >
+            <ChevronRight size={22} color={atCurrent ? "#3a3a46" : "#f5f5f5"} />
+          </Pressable>
         </View>
 
         {/* Double day toggle */}
@@ -182,33 +253,32 @@ export default function HomeScreen() {
           </Text>
         </Pressable>
 
-        {/* Total Outstanding */}
+        {/* Outstanding for the period */}
         <View
           className="mx-5 mt-4 mb-6 bg-card rounded-2xl px-5 py-5 border border-border"
           style={styles.card}
         >
           <Text className="text-text-muted text-xs font-medium uppercase tracking-widest">
-            Outstanding
+            Outstanding · {period.label}
           </Text>
           <Text className="text-primary text-3xl font-bold mt-1" selectable style={styles.amount}>
-            {formatAmount(totalOutstanding, currency)}
+            {formatAmount(periodOutstanding, currency)}
           </Text>
         </View>
 
         {hasFines ? (
           <>
-            {/* Leaderboard */}
+            {/* Players for the period */}
             <View className="px-5 mb-6">
               <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mb-1">
-                Leaderboard
+                Players
               </Text>
-              {leaderboard.map((entry, index) => (
-                <LeaderboardItem
+              {leaderboard.map((entry) => (
+                <PeriodPlayerRow
                   key={entry.memberId}
-                  rank={index + 1}
-                  name={entry.memberName}
-                  total={formatAmount(entry.total, currency)}
-                  href={`/player/${entry.memberId}`}
+                  entry={entry}
+                  currency={currency}
+                  onPress={() => handlePlayerPress(entry)}
                 />
               ))}
             </View>
@@ -256,6 +326,55 @@ export default function HomeScreen() {
         <Plus size={24} color="#0f0f14" strokeWidth={2.5} />
       </Pressable>
     </View>
+  );
+}
+
+function PeriodPlayerRow({
+  entry,
+  currency,
+  onPress,
+}: {
+  entry: PeriodLeaderboardEntry;
+  currency: string;
+  onPress: () => void;
+}) {
+  const subline =
+    entry.status === "paid"
+      ? "Paid in full"
+      : entry.status === "partial"
+        ? `Paid ${formatAmount(entry.amountPaid, currency)} of ${formatAmount(entry.total, currency)}`
+        : entry.total === 0
+          ? "Nothing owed"
+          : "Unpaid";
+
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityHint="Tap to mark paid or view details"
+      accessibilityLabel={`${entry.memberName}, ${subline}`}
+      className="flex-row items-center min-h-[44px] py-3 border-b border-border active:opacity-70"
+    >
+      <PlayerAvatar name={entry.memberName} size={32} />
+      <View className="flex-1 ml-3">
+        <Text className="text-text-primary text-base">{entry.memberName}</Text>
+        <Text className="text-text-muted text-xs mt-0.5">{subline}</Text>
+      </View>
+      {entry.status === "paid" ? (
+        <View className="flex-row items-center gap-1">
+          <Check size={16} color="#10b981" strokeWidth={2.5} />
+          <Text className="text-success text-sm font-semibold">Paid</Text>
+        </View>
+      ) : (
+        <Text
+          className={`text-sm font-semibold ${entry.status === "partial" ? "text-primary" : "text-danger"}`}
+          selectable
+          style={styles.amount}
+        >
+          {formatAmount(entry.remaining, currency)}
+        </Text>
+      )}
+    </Pressable>
   );
 }
 

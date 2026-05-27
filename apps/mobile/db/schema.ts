@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, primaryKey } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, primaryKey, unique } from "drizzle-orm/sqlite-core";
 
 export const teams = sqliteTable("teams", {
   id: text("id").primaryKey(),
@@ -8,6 +8,9 @@ export const teams = sqliteTable("teams", {
   doubleDayDate: text("double_day_date"),
   lastMonthlyRunAt: text("last_monthly_run_at"),
   onboardingCompletedAt: integer("onboarding_completed_at", { mode: "timestamp_ms" }),
+  fineInterval: text("fine_interval", { enum: ["weekly", "monthly", "quarterly"] })
+    .notNull()
+    .default("monthly"),
 });
 
 export const members = sqliteTable("members", {
@@ -57,4 +60,22 @@ export const monthlyFineMembers = sqliteTable(
       .references(() => members.id),
   },
   (table) => [primaryKey({ columns: [table.fineTypeId, table.memberId] })]
+);
+
+// One row per (member, period) once that player has settled up for the period.
+// `amountPaid` is a snapshot of what was owed at the moment it was marked paid —
+// fines logged into the same period afterwards reopen a remaining balance.
+export const payments = sqliteTable(
+  "payments",
+  {
+    id: text("id").primaryKey(),
+    memberId: text("member_id")
+      .notNull()
+      .references(() => members.id),
+    periodKey: text("period_key").notNull(),
+    interval: text("interval", { enum: ["weekly", "monthly", "quarterly"] }).notNull(),
+    amountPaid: integer("amount_paid").notNull(),
+    paidAt: integer("paid_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (table) => [unique().on(table.memberId, table.periodKey)]
 );

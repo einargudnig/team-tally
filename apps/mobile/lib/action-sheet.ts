@@ -44,6 +44,42 @@ export function showEditDeleteSheet({
   ]);
 }
 
+interface SheetAction {
+  label: string;
+  onPress: () => void;
+  destructive?: boolean;
+}
+
+/** Generic action sheet: a titled list of choices plus an implicit Cancel. */
+export function showActionSheet(title: string, message: string | undefined, actions: SheetAction[]) {
+  if (Platform.OS === "ios") {
+    const destructiveIndex = actions.findIndex((a) => a.destructive);
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        title,
+        message,
+        options: [...actions.map((a) => a.label), "Cancel"],
+        destructiveButtonIndex: destructiveIndex >= 0 ? destructiveIndex : undefined,
+        cancelButtonIndex: actions.length,
+        userInterfaceStyle: "dark",
+      },
+      (index) => {
+        if (index < actions.length) actions[index]?.onPress();
+      }
+    );
+    return;
+  }
+
+  Alert.alert(title, message, [
+    ...actions.map((a) => ({
+      text: a.label,
+      style: a.destructive ? ("destructive" as const) : ("default" as const),
+      onPress: a.onPress,
+    })),
+    { text: "Cancel", style: "cancel" },
+  ]);
+}
+
 function confirmDelete(message: string | undefined, onConfirm: () => void) {
   Alert.alert("Delete", message ?? "This can't be undone.", [
     { text: "Cancel", style: "cancel" },
