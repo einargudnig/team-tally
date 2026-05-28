@@ -2,8 +2,10 @@ import { useState } from "react";
 import { KeyboardAvoidingView, StyleSheet } from "react-native";
 import { View, Text, TextInput, Pressable, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
+import * as Haptics from "expo-haptics";
 import { getTeam, createTeam, updateTeam } from "@/db/queries";
 import { currencies, getCurrencyInfo } from "@/lib/currency";
+import { INTERVAL_OPTIONS, type Interval } from "@/lib/period";
 import { OnboardingProgress } from "@/components/onboarding-progress";
 
 export default function OnboardingTeamScreen() {
@@ -11,6 +13,9 @@ export default function OnboardingTeamScreen() {
   const existing = getTeam();
   const [teamName, setTeamName] = useState(existing?.name ?? "");
   const [selectedCurrency, setSelectedCurrency] = useState(existing?.currency ?? "ISK");
+  const [selectedInterval, setSelectedInterval] = useState<Interval>(
+    existing?.fineInterval ?? "monthly"
+  );
   const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
 
   const selectedInfo = getCurrencyInfo(selectedCurrency);
@@ -19,9 +24,13 @@ export default function OnboardingTeamScreen() {
     const trimmed = teamName.trim();
     if (!trimmed) return;
     if (existing) {
-      updateTeam(existing.id, { name: trimmed, currency: selectedCurrency });
+      updateTeam(existing.id, {
+        name: trimmed,
+        currency: selectedCurrency,
+        fineInterval: selectedInterval,
+      });
     } else {
-      createTeam(trimmed, selectedCurrency);
+      createTeam(trimmed, selectedCurrency, selectedInterval);
     }
     router.replace("/onboarding/players" as never);
   }
@@ -97,6 +106,37 @@ export default function OnboardingTeamScreen() {
             </ScrollView>
           </View>
         )}
+
+        <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mt-2 mb-2">
+          How often do you collect?
+        </Text>
+        <View className="flex-row gap-2">
+          {INTERVAL_OPTIONS.map((opt) => {
+            const active = opt.value === selectedInterval;
+            return (
+              <Pressable
+                key={opt.value}
+                onPress={() => {
+                  setSelectedInterval(opt.value);
+                  if (process.env.EXPO_OS === "ios") Haptics.selectionAsync();
+                }}
+                accessibilityRole="button"
+                accessibilityState={{ selected: active }}
+                accessibilityLabel={`${opt.label} collection`}
+                className={`flex-1 rounded-xl min-h-[44px] justify-center items-center border active:opacity-70 ${
+                  active ? "bg-primary border-primary" : "bg-card border-border"
+                }`}
+                style={styles.card}
+              >
+                <Text
+                  className={`text-sm font-semibold ${active ? "text-surface" : "text-text-primary"}`}
+                >
+                  {opt.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
 
         <Pressable
           onPress={handleContinue}

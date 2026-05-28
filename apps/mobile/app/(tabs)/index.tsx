@@ -171,7 +171,8 @@ export default function HomeScreen() {
 
   const { teamName, currency, playerCount, periodOutstanding, leaderboard, recentActivity, doubleDayActive } =
     data;
-  const hasFines = recentActivity.length > 0;
+  const hasAnyHistory = recentActivity.length > 0;
+  const periodHasFines = leaderboard.some((e) => e.total > 0);
   const atCurrent = isCurrentPeriod(period);
 
   return (
@@ -266,24 +267,38 @@ export default function HomeScreen() {
           </Text>
         </View>
 
-        {hasFines ? (
+        {!hasAnyHistory && (
+          <View className="items-center px-5 py-20">
+            <TrendingUp size={40} color="#8b8fa3" strokeWidth={1.5} />
+            <Text className="text-text-secondary text-base font-medium mt-4">No fines yet</Text>
+            <Text className="text-text-muted text-sm mt-1 text-center">
+              Log a fine to see your team's leaderboard come alive
+            </Text>
+          </View>
+        )}
+
+        {hasAnyHistory && (
           <>
             {/* Players for the period */}
             <View className="px-5 mb-6">
               <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mb-1">
                 Players
               </Text>
-              {leaderboard.map((entry) => (
-                <PeriodPlayerRow
-                  key={entry.memberId}
-                  entry={entry}
-                  currency={currency}
-                  onPress={() => handlePlayerPress(entry)}
-                />
-              ))}
+              {periodHasFines ? (
+                leaderboard.map((entry) => (
+                  <PeriodPlayerRow
+                    key={entry.memberId}
+                    entry={entry}
+                    currency={currency}
+                    onPress={() => handlePlayerPress(entry)}
+                  />
+                ))
+              ) : (
+                <PeriodEmptyState period={period} atCurrent={atCurrent} />
+              )}
             </View>
 
-            {/* Recent Activity */}
+            {/* Recent Activity — team-wide, so old fines still show context. */}
             <View className="px-5">
               <Text className="text-text-muted text-xs font-medium uppercase tracking-widest mb-1">
                 Recent
@@ -300,14 +315,6 @@ export default function HomeScreen() {
               ))}
             </View>
           </>
-        ) : (
-          <View className="items-center px-5 py-20">
-            <TrendingUp size={40} color="#8b8fa3" strokeWidth={1.5} />
-            <Text className="text-text-secondary text-base font-medium mt-4">No fines yet</Text>
-            <Text className="text-text-muted text-sm mt-1 text-center">
-              Log a fine to see your team's leaderboard come alive
-            </Text>
-          </View>
         )}
       </ScrollView>
 
@@ -325,6 +332,25 @@ export default function HomeScreen() {
       >
         <Plus size={24} color="#0f0f14" strokeWidth={2.5} />
       </Pressable>
+    </View>
+  );
+}
+
+// Empty state for a period with no fines, when the team has history elsewhere.
+// Tone is calm — $0 owed is good news — and we lean on the stepper above (already
+// in view) rather than adding another button. Current vs past split because
+// "clean sheet" only reads right for the live period.
+function PeriodEmptyState({ period, atCurrent }: { period: Period; atCurrent: boolean }) {
+  return (
+    <View className="items-center py-12 px-2">
+      <Text className="text-text-secondary text-base font-medium text-center">
+        {atCurrent ? `Clean sheet for ${period.label}.` : `Nothing logged in ${period.label}.`}
+      </Text>
+      <Text className="text-text-muted text-sm mt-1 text-center">
+        {atCurrent
+          ? "Tap ‹ above to look back, or log a fine when one happens."
+          : "Use the arrows above to browse other periods."}
+      </Text>
     </View>
   );
 }

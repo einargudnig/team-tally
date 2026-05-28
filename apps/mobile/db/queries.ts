@@ -29,13 +29,14 @@ export function getTeam() {
   return result[0] ?? null;
 }
 
-export function createTeam(name: string, currency: string) {
+export function createTeam(name: string, currency: string, fineInterval: Interval = "monthly") {
   const id = uuid();
   db.insert(teams)
     .values({
       id,
       name,
       currency,
+      fineInterval,
       createdAt: new Date(),
     })
     .run();
