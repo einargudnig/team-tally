@@ -6,130 +6,110 @@ Apple requires 3–10 screenshots for the **6.5" iPhone** display size. One set 
 
 - **Device class**: 6.5" iPhone
 - **Resolution**: 1284×2778 (iPhone 14 Plus / 15 Plus) **or** 1242×2688 (iPhone 11 Pro Max)
-- **Format**: PNG (Cmd+S in Simulator gives this by default)
-- **Count**: 5 recommended — enough to tell the story without thinning attention
+- **Format**: PNG
+- **Count**: 5 — enough to tell the story without thinning attention
 
 ## Recommended Simulator
 
 ```bash
 xcrun simctl list devices available | grep "iPhone 16 Pro Max"
-# Boot it:
 open -a Simulator
-# Then Hardware → Device → iPhone 16 Pro Max
 ```
 
 iPhone 16 Pro Max gives 1320×2868 (close enough — ASC auto-resizes downward).
-If you'd rather match the spec exactly, use **iPhone 15 Plus** instead.
+
+## Pin the status bar to a clean state
+
+```
+xcrun simctl status_bar booted override --time 9:41 --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3 --dataNetwork wifi --cellularMode active
+```
+
+`9:41` is the Apple convention. Looks intentional.
 
 ---
 
 ## The 5 shots (in store-page order)
 
-The first 2 screenshots are what most users see in search results. Front-load the hook.
+The first 2 screenshots are what most users see in search results — front-load the hook.
 
 ### 1. Home / Leaderboard — "the hero shot"
 
-**Why:** The fastest way to communicate "this app shows who's worst on your team". Visual social proof: a leaderboard. Standings + total kitty visible.
+**Why:** The fastest way to communicate "this app shows who's worst on your team". The current period is labelled at the top ("Outstanding · June 2026"), so the period feature gets *implicit* exposure without needing its own shot.
 
 **Screen:** `(tabs)/index.tsx`
 
-**Seed needs:** 5–8 members, fines applied so leaderboard has meaningful gaps, total outstanding visible at top.
+**Seed needs:** Mixed payment status visible (a `Paid` badge, a `Paid €X of €Y` partial subline, and unpaid amounts) — the seed already produces this.
 
 ### 2. Player Detail — "the receipts"
 
-**Why:** Shows the depth — every fine timestamped, totalled, no escape. The "your data is safe and visible" angle.
+**Why:** Shows the depth — every fine timestamped, totalled, no escape.
 
-**Screen:** `player/[id].tsx`
+**Screen:** `player/[id].tsx` — open Messi (top of leaderboard).
 
-**Seed needs:** One player with 8–15 fines across different fine types, mixed dates.
+**Seed needs:** 12 fines across multiple types and dates — the seed already handles this.
 
-### 3. Add Fine sheet — "the daily ritual"
+### 3. Mark Paid action sheet — "the new beat"
 
-**Why:** Demos the core interaction (the thing you do every training). Quick, tactile. Last commit polished this — show it off.
+**Why:** This is the headline new feature since v1.0 was first drafted. The action sheet shows the `Mark paid · €X` line with a real amount — communicates the payment-tracking flow in one frame.
 
-**Screen:** `add-fine.tsx` open as a sheet.
+**Screen:** `(tabs)/index.tsx` with the action sheet open. Tap any unpaid player on the leaderboard to trigger it.
 
-**Seed needs:** A handful of fine types + members so the pickers look populated.
+**Seed needs:** An unpaid player at the top — Messi (idx 0) works perfectly.
 
-### 4. Fines tab — "the catalog"
+### 4. Add Fine sheet — "the daily ritual"
 
-**Why:** Communicates "fully customizable" — your fines, your amounts, your team's rules. Shows monthly cadence labels for the recurring ones.
+**Why:** The core interaction; the thing you do every training. Quick, tactile.
 
-**Screen:** `(tabs)/fines.tsx`
+**Screen:** `add-fine.tsx` opened as a sheet from the `+` FAB.
 
-**Seed needs:** 6–10 fine types, mix of one-off and monthly cadence, amounts in your team currency.
+**Seed needs:** A handful of fine types + members so the pickers look populated — seed covers this.
 
 ### 5. Double Day toggle on Home — "the moment"
 
-**Why:** A distinctive feature unique to this app. Toggle ON visible, total outstanding doubled. Conveys "fun" + "we get sports culture".
+**Why:** Distinctive feature unique to this app. Toggle ON visible, banner highlighted, total outstanding doubled. Conveys "fun" + "we get sports culture".
 
-**Screen:** `(tabs)/index.tsx` with double-day banner active.
+**Screen:** `(tabs)/index.tsx` with double-day banner active. Tap the `2×` banner before capturing.
 
-**Seed needs:** Same as shot 1, but flip the double-day toggle before capturing.
-
-> **Alternative #5:** Settings screen. Skip if you'd rather lead with feature delight over customization.
+**Seed needs:** Same as shot 1, with the toggle flipped on.
 
 ---
 
-## Seed data — pick a vibe
+## Seed data — dev-only button in Settings
 
-The data on screen is brand. "Player 1, Player 2" instantly reads as a screenshot mockup; real-feeling names sell that this is a tool real teams use.
+`lib/seed-demo.ts` exposes `seedDemoData()`, surfaced as a "Seed demo data (dev only)" button at the bottom of Settings in `__DEV__` builds.
 
-**Suggested team name:** something specific but generic enough to feel real. E.g. `Hraunsmenn FC`, `Sunday League B`, `KR drengjaflokkur`.
+Loads:
+- Team: **Legends FC**, currency **EUR**, interval **monthly**
+- Players: Messi, Ronaldo, Mbappé, Haaland, Neymar Jr, Modrić
+- Fines spread across the current month + 2 previous months (so stepping back in the period selector shows real data)
+- One player paid in full, one partial — so the leaderboard shot shows all three status badges
 
-**Suggested player names (8 — pick any 6):**
-- Jón Gunnarsson
-- Aron Einarsson
-- Birkir Þór
-- Daníel Snær
-- Egill Pálsson
-- Fannar Logi
-- Gunnar Þorvaldsson
-- Hjalti Már
-
-> Real-feeling Icelandic names anchor authenticity for the Icelandic market. Swap for English names if launching globally first.
-
-**Suggested fine types:**
-- `Late to training` — 500 ISK — one_off
-- `Phone out during huddle` — 1000 ISK — one_off
-- `Missed training` — 2000 ISK — one_off
-- `Wrong colour socks` — 500 ISK — one_off
-- `Goal celebration too much` — 1500 ISK — one_off
-- `Monthly subs` — 3000 ISK — monthly
-- `Late to match` — 2500 ISK — one_off
+To re-seed for a retake: Settings → "Seed demo data (dev only)" → confirm.
 
 ---
 
 ## Capture workflow
 
-1. Boot the simulator (iPhone 16 Pro Max or 15 Plus)
-2. Run the app: `bun run dev:mobile` from repo root (or `cd apps/mobile && bun start --ios`)
-3. Complete onboarding with your chosen team name
-4. **Seed by hand via the UI** — players + fine types + a batch of fine entries. ~5 min of tapping.
-5. Take screenshots: **Cmd+S** in Simulator saves PNG to Desktop. The filename includes the device + timestamp.
-6. Rename them numerically: `01-leaderboard.png`, `02-player-detail.png`, etc. — ASC takes them in upload order.
-
-> **Tip:** Set status bar to a perfect state — full battery, no notch indicators — with:
-> ```
-> xcrun simctl status_bar booted override --time 9:41 --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3
-> ```
-> `9:41` is the Apple convention. Looks intentional.
+1. Boot the simulator (iPhone 16 Pro Max), apply the status-bar override.
+2. Build & install the dev app: `bun x expo run:ios --device <UDID>` (5–15 min cold cache).
+3. Complete onboarding once with any team name (then dev seed will overwrite it).
+4. Settings → "Seed demo data (dev only)" → confirm.
+5. Navigate to each of the 5 screens above.
+6. Capture each with: `xcrun simctl io booted screenshot apps/mobile/screenshots/0N-name.png`
 
 ---
 
-## Optional: seed script
+## Decision points
 
-If you'd rather not hand-seed each time, I can write a one-shot `scripts/seed.ts` that calls the same `db/queries.ts` helpers to create the suggested team + players + fines in one go. Costs ~20 lines of code, saves you ~5 min per re-shoot. Useful if you end up needing to retake screenshots later (e.g. after a UI tweak).
+Locked in for the current set:
 
----
+- **Team name** — Legends FC
+- **Currency** — EUR
+- **Player names** — football superstars (matches v1 screenshots)
 
-## Decision points (your call)
+If you want to localize for the Icelandic market later (Hraunsmenn FC + ISK + Icelandic names per the suggestions below), edit `lib/seed-demo.ts` and re-shoot — the dev button makes this ~2 minutes.
 
-These shape the screenshots more than any technical setting:
-
-- **Team name** — what feels right for your store page
-- **Currency** — ISK (Icelandic focus) or USD/EUR (global focus)
-- **Player names** — Icelandic, English, or fictional/funny
-- **Fine type vibe** — earnest ("Late to training") vs. cheeky ("Goal celebration too much"). The mix sets the app's tone.
-
-A coherent voice across these 5 shots is worth more than any single shot being perfect.
+> **Icelandic-market alternates** (kept for future use):
+> - Team: `Hraunsmenn FC`, `Sunday League B`, `KR drengjaflokkur`
+> - Players: Jón Gunnarsson, Aron Einarsson, Birkir Þór, Daníel Snær, Egill Pálsson, Fannar Logi
+> - Currency: ISK

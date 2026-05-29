@@ -62,7 +62,8 @@ Football teams, locker rooms, club nights, fundraisers — anyone with a kitty a
 WHAT YOU CAN TRACK
 
 • One-off fines (late to training, wrong colour socks, phone out during the huddle — write your own)
-• Monthly subs that apply themselves on the 1st of every month
+• Weekly, monthly, or quarterly settlement — pick the rhythm your team already runs on
+• Mark players paid as the kitty comes in — no more "did so-and-so pay yet?" texts on a Sunday night
 • Double Day specials when you want fines to count twice
 • A live leaderboard so the worst offender can never hide
 • A per-player history showing every fine, every date, every krónur owed

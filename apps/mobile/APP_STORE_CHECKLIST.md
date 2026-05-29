@@ -1,6 +1,6 @@
 # Team Tally — Ship to App Store Checklist
 
-Last updated: 2026-05-12. Everything left to take v1 live, in order.
+Last updated: 2026-05-28. Everything left to take v1 live, in order.
 
 ---
 
@@ -13,20 +13,18 @@ Last updated: 2026-05-12. Everything left to take v1 live, in order.
 - [x] Privacy policy live at https://team-tally.app/privacy
 - [x] Support page live at https://team-tally.app/support
 - [x] Apple Distribution Cert + Provisioning Profile generated and cached on EAS
-- [x] **Build #3** (`cd80a422-...`, commit `824305c`) finished and submitted to ASC
+- [x] Builds 3–8 submitted to TestFlight via `eas submit`
 - [x] Store metadata drafted in `STORE_METADATA.md`
-- [x] 5 screenshots captured in `apps/mobile/screenshots/`
-
-> Build #2 had two bugs (onboarding redirect + Add Fine empty rendering). Build #3 fixes both. Use build #3 in ASC — **do not** select build #2.
+- [x] Screenshots refreshed in `apps/mobile/screenshots/` after billing-periods + payment-tracking features landed
 
 ---
 
-## 1. Verify build #3 lands in TestFlight
+## 1. Verify the latest build lands in TestFlight
 
-Apple processes the uploaded `.ipa` for 10–30 min after EAS submit finishes. You'll get an email titled *"Team Tally — build 3 has completed processing"*.
+Apple processes uploaded `.ipa` files for 10–30 min after EAS submit. You'll get an email titled *"Team Tally — build N has completed processing"*.
 
 - [ ] Email received from App Store Connect
-- [ ] Build #3 appears at https://appstoreconnect.apple.com/apps/6764513102/testflight/ios as **"Ready to Test"**
+- [ ] Latest build (8 at time of writing) appears at https://appstoreconnect.apple.com/apps/6764513102/testflight/ios as **"Ready to Test"**
 
 If you get an `ITMS-90XXX` error email instead, paste the error to me and we'll fix.
 

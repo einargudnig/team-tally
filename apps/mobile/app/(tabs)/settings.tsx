@@ -184,7 +184,7 @@ export default function SettingsScreen() {
             onPress={() => {
               Alert.alert(
                 "Reset & seed demo data?",
-                "Wipes the database and loads Hraunsmenn FC with 6 players and ~35 fines. Dev builds only.",
+                "Wipes the database and loads FC Barcelona: 6 players, fines across 3 months, plus a couple of paid-status players in the current period. Dev builds only.",
                 [
                   { text: "Cancel", style: "cancel" },
                   {
