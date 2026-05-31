@@ -4,6 +4,7 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { ActivityIndicator } from "react-native";
 import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SplashScreen from "expo-splash-screen";
 import { getTeam, getOnboardingResumeStep } from "@/db/queries";
 import { ErrorScreen } from "@/components/error-screen";
@@ -55,7 +56,7 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="onboarding" />
@@ -96,6 +97,6 @@ export default function RootLayout() {
           }}
         />
       </Stack>
-    </>
+    </GestureHandlerRootView>
   );
 }

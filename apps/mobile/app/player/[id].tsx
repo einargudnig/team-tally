@@ -2,12 +2,13 @@ import { useState, useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useFocusEffect } from "expo-router";
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable, Alert } from "react-native";
 import * as Haptics from "expo-haptics";
 import { getTeam, getMembers, getPlayerDetail, deleteFineEntry } from "@/db/queries";
 import { formatAmount } from "@/lib/currency";
 import { showEditDeleteSheet } from "@/lib/action-sheet";
 import { PlayerAvatar } from "@/components/player-avatar";
+import { SwipeableRow } from "@/components/swipeable-row";
 
 type BreakdownItem = {
   fineTypeId: string;
@@ -47,18 +48,31 @@ export default function PlayerDetailScreen() {
     setTotalAmount(detail.breakdown.reduce((sum, b) => sum + b.subtotal, 0));
   }
 
+  function editEntry(entry: HistoryItem) {
+    router.push(`/edit-fine/${entry.id}` as never);
+  }
+
+  function deleteEntry(entry: HistoryItem) {
+    deleteFineEntry(entry.id);
+    if (process.env.EXPO_OS === "ios")
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    loadData();
+  }
+
+  function confirmDeleteEntry(entry: HistoryItem) {
+    Alert.alert("Delete", "Remove this fine entry?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", style: "destructive", onPress: () => deleteEntry(entry) },
+    ]);
+  }
+
   function handleEntryPress(entry: HistoryItem) {
     if (process.env.EXPO_OS === "ios") Haptics.selectionAsync();
     showEditDeleteSheet({
       title: entry.fineTypeName,
       destructiveMessage: "Remove this fine entry?",
-      onEdit: () => router.push(`/edit-fine/${entry.id}` as never),
-      onDelete: () => {
-        deleteFineEntry(entry.id);
-        if (process.env.EXPO_OS === "ios")
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-        loadData();
-      },
+      onEdit: () => editEntry(entry),
+      onDelete: () => deleteEntry(entry),
     });
   }
 
@@ -126,25 +140,30 @@ export default function PlayerDetailScreen() {
           ) : (
             <View>
               {history.map((entry) => (
-                <Pressable
+                <SwipeableRow
                   key={entry.id}
-                  onPress={() => handleEntryPress(entry)}
-                  accessibilityRole="button"
-                  accessibilityHint="Tap for edit and delete options"
-                  className="flex-row items-center justify-between min-h-[44px] py-3 border-b border-border active:opacity-70"
+                  onEdit={() => editEntry(entry)}
+                  onDelete={() => confirmDeleteEntry(entry)}
                 >
-                  <View className="flex-1 mr-3">
-                    <Text className="text-text-primary text-base">{entry.fineTypeName}</Text>
-                    <Text className="text-text-muted text-sm mt-0.5">{entry.date}</Text>
-                  </View>
-                  <Text
-                    className="text-danger text-base font-semibold"
-                    selectable
-                    style={styles.amount}
+                  <Pressable
+                    onPress={() => handleEntryPress(entry)}
+                    accessibilityRole="button"
+                    accessibilityHint="Tap for options, or swipe to edit and delete"
+                    className="flex-row items-center justify-between min-h-[44px] py-3 border-b border-border bg-surface active:opacity-70"
                   >
-                    {formatAmount(entry.amount, currency)}
-                  </Text>
-                </Pressable>
+                    <View className="flex-1 mr-3">
+                      <Text className="text-text-primary text-base">{entry.fineTypeName}</Text>
+                      <Text className="text-text-muted text-sm mt-0.5">{entry.date}</Text>
+                    </View>
+                    <Text
+                      className="text-danger text-base font-semibold"
+                      selectable
+                      style={styles.amount}
+                    >
+                      {formatAmount(entry.amount, currency)}
+                    </Text>
+                  </Pressable>
+                </SwipeableRow>
               ))}
             </View>
           )}
