@@ -24,6 +24,7 @@ import {
 import { formatAmount } from "@/lib/currency";
 import { showEditDeleteSheet } from "@/lib/action-sheet";
 import { MemberChip } from "@/components/member-chip";
+import { SwipeableRow } from "@/components/swipeable-row";
 
 type FineType = {
   id: string;
@@ -186,18 +187,31 @@ export default function FinesScreen() {
     );
   }
 
+  function deleteType(item: FineType) {
+    deleteFineType(item.id);
+    if (process.env.EXPO_OS === "ios")
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    loadData();
+  }
+
+  function confirmDeleteType(item: FineType) {
+    Alert.alert(
+      "Delete",
+      `Delete "${item.name}"? This also removes all fine entries using it.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete", style: "destructive", onPress: () => deleteType(item) },
+      ]
+    );
+  }
+
   function handleRowPress(item: FineType) {
     if (process.env.EXPO_OS === "ios") Haptics.selectionAsync();
     showEditDeleteSheet({
       title: item.name,
       destructiveMessage: `Delete "${item.name}"? This also removes all fine entries using it.`,
       onEdit: () => openEdit(item),
-      onDelete: () => {
-        deleteFineType(item.id);
-        if (process.env.EXPO_OS === "ios")
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-        loadData();
-      },
+      onDelete: () => deleteType(item),
     });
   }
 
@@ -206,31 +220,33 @@ export default function FinesScreen() {
       const isMonthly = item.cadence === "monthly";
       const monthlyCount = isMonthly ? (monthlyMembersByType[item.id]?.length ?? 0) : 0;
       return (
-        <Pressable
-          onPress={() => handleRowPress(item)}
-          accessibilityRole="button"
-          accessibilityHint="Tap for edit and delete options"
-          className="flex-row justify-between items-center min-h-[44px] py-3 border-b border-border active:opacity-70"
-        >
-          <View className="flex-1 mr-3">
-            <View className="flex-row items-center gap-2">
-              <Text className="text-text-primary text-base">{item.name}</Text>
-              {isMonthly && (
-                <View className="bg-primary-muted rounded-full px-2 py-0.5">
-                  <Text className="text-primary text-xs font-semibold">
-                    Monthly · {monthlyCount}
-                  </Text>
-                </View>
-              )}
+        <SwipeableRow onEdit={() => openEdit(item)} onDelete={() => confirmDeleteType(item)}>
+          <Pressable
+            onPress={() => handleRowPress(item)}
+            accessibilityRole="button"
+            accessibilityHint="Tap for options, or swipe to edit and delete"
+            className="flex-row justify-between items-center min-h-[44px] py-3 border-b border-border bg-surface active:opacity-70"
+          >
+            <View className="flex-1 mr-3">
+              <View className="flex-row items-center gap-2">
+                <Text className="text-text-primary text-base">{item.name}</Text>
+                {isMonthly && (
+                  <View className="bg-primary-muted rounded-full px-2 py-0.5">
+                    <Text className="text-primary text-xs font-semibold">
+                      Monthly · {monthlyCount}
+                    </Text>
+                  </View>
+                )}
+              </View>
+              {item.description ? (
+                <Text className="text-text-muted text-sm mt-0.5">{item.description}</Text>
+              ) : null}
             </View>
-            {item.description ? (
-              <Text className="text-text-muted text-sm mt-0.5">{item.description}</Text>
-            ) : null}
-          </View>
-          <Text className="text-primary text-base font-semibold" selectable style={styles.amount}>
-            {formatAmount(item.amount, currency)}
-          </Text>
-        </Pressable>
+            <Text className="text-primary text-base font-semibold" selectable style={styles.amount}>
+              {formatAmount(item.amount, currency)}
+            </Text>
+          </Pressable>
+        </SwipeableRow>
       );
     },
     [currency, monthlyMembersByType]
