@@ -11,6 +11,11 @@ export const teams = sqliteTable("teams", {
   fineInterval: text("fine_interval", { enum: ["weekly", "monthly", "quarterly"] })
     .notNull()
     .default("monthly"),
+  // Local reminder schedule (no server — fired on-device via expo-notifications).
+  reminderEnabled: integer("reminder_enabled", { mode: "boolean" }).notNull().default(false),
+  // JSON array of per-day reminders, e.g. [{ "day": 3, "time": "19:00" }] where
+  // day is a weekday number 1=Sun … 7=Sat and time is "HH:MM" 24h local.
+  reminderSchedule: text("reminder_schedule"),
 });
 
 export const members = sqliteTable("members", {

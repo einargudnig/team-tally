@@ -1,8 +1,8 @@
-import { ScrollView, View, Text, Pressable, RefreshControl, StyleSheet } from "react-native";
+import { ScrollView, View, Text, Pressable, RefreshControl, StyleSheet, Share } from "react-native";
 import { useCallback, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Plus, TrendingUp, ChevronLeft, ChevronRight, Check } from "lucide-react-native";
+import { Plus, TrendingUp, ChevronLeft, ChevronRight, Check, Share2 } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
 import {
   getTeam,
@@ -26,6 +26,7 @@ import {
   type Period,
 } from "@/lib/period";
 import { formatAmount } from "@/lib/currency";
+import { buildLeaderboardExport } from "@/lib/export";
 import { showEditDeleteSheet, showActionSheet } from "@/lib/action-sheet";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { FineActivityItem } from "@/components/fine-activity-item";
@@ -116,6 +117,23 @@ export default function HomeScreen() {
     setRefreshing(false);
   }
 
+  async function handleShare() {
+    if (!data || !period) return;
+    if (process.env.EXPO_OS === "ios") Haptics.selectionAsync();
+    const message = buildLeaderboardExport({
+      teamName: data.teamName,
+      currency: data.currency,
+      period,
+      leaderboard: data.leaderboard,
+      outstanding: data.periodOutstanding,
+    });
+    try {
+      await Share.share({ message });
+    } catch {
+      // user dismissed the share sheet — nothing to do
+    }
+  }
+
   function handlePlayerPress(entry: PeriodLeaderboardEntry) {
     if (!period) return;
     if (process.env.EXPO_OS === "ios") Haptics.selectionAsync();
@@ -195,7 +213,18 @@ export default function HomeScreen() {
             </Text>
             <Text className="text-text-primary text-2xl font-bold mt-1">{teamName}</Text>
           </View>
-          <View className="mt-1">
+          <View className="mt-1 flex-row items-center gap-2">
+            {periodHasFines && (
+              <Pressable
+                onPress={handleShare}
+                accessibilityRole="button"
+                accessibilityLabel={`Share ${period.label} standings`}
+                hitSlop={8}
+                className="w-9 h-9 items-center justify-center rounded-full bg-card border border-border active:opacity-60"
+              >
+                <Share2 size={17} color="#f5f5f5" />
+              </Pressable>
+            )}
             <Logo size={32} />
           </View>
         </View>

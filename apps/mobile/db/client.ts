@@ -76,5 +76,7 @@ addColumnIfMissing("teams", "onboarding_completed_at", "onboarding_completed_at 
     `UPDATE teams SET onboarding_completed_at = created_at WHERE onboarding_completed_at IS NULL`
   );
 });
+addColumnIfMissing("teams", "reminder_enabled", "reminder_enabled INTEGER NOT NULL DEFAULT 0");
+addColumnIfMissing("teams", "reminder_schedule", "reminder_schedule TEXT");
 
 export const db = drizzle(expoDb, { schema });

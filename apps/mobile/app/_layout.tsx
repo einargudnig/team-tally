@@ -6,8 +6,19 @@ import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SplashScreen from "expo-splash-screen";
+import * as Notifications from "expo-notifications";
 import { getTeam, getOnboardingResumeStep } from "@/db/queries";
 import { ErrorScreen } from "@/components/error-screen";
+
+// Show reminder banners even when the app is foregrounded.
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export function ErrorBoundary({ error, retry }: { error: Error; retry: () => void }) {
   if (__DEV__) console.error("[RootErrorBoundary]", error);

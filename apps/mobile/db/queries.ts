@@ -50,6 +50,43 @@ export function updateTeam(
   db.update(teams).set(data).where(eq(teams.id, id)).run();
 }
 
+export type DayReminder = { day: number; time: string }; // day 1=Sun … 7=Sat, time "HH:MM"
+export type ReminderSettings = {
+  enabled: boolean;
+  schedule: DayReminder[]; // one entry per selected day, each with its own time
+};
+
+export function getReminderSettings(team: {
+  reminderEnabled: boolean;
+  reminderSchedule: string | null;
+}): ReminderSettings {
+  let schedule: DayReminder[] = [];
+  if (team.reminderSchedule) {
+    try {
+      const parsed = JSON.parse(team.reminderSchedule);
+      if (Array.isArray(parsed)) {
+        schedule = parsed
+          .filter((e) => typeof e?.day === "number" && typeof e?.time === "string")
+          .map((e) => ({ day: e.day as number, time: e.time as string }))
+          .sort((a, b) => a.day - b.day);
+      }
+    } catch {
+      // corrupt value — fall back to no schedule
+    }
+  }
+  return { enabled: team.reminderEnabled, schedule };
+}
+
+export function setReminderSettings(teamId: string, settings: ReminderSettings) {
+  db.update(teams)
+    .set({
+      reminderEnabled: settings.enabled,
+      reminderSchedule: settings.schedule.length ? JSON.stringify(settings.schedule) : null,
+    })
+    .where(eq(teams.id, teamId))
+    .run();
+}
+
 // === Onboarding ===
 
 export type OnboardingStep = "team" | "players" | "fines" | "first-fine";
