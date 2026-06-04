@@ -1,5 +1,7 @@
 import { ScrollView, View, Text, Pressable, RefreshControl, StyleSheet, Share } from "react-native";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { captureRef } from "react-native-view-shot";
+import * as Sharing from "expo-sharing";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Plus, TrendingUp, ChevronLeft, ChevronRight, Check, Share2 } from "lucide-react-native";
@@ -31,6 +33,7 @@ import { showEditDeleteSheet, showActionSheet } from "@/lib/action-sheet";
 import { PlayerAvatar } from "@/components/player-avatar";
 import { FineActivityItem } from "@/components/fine-activity-item";
 import { Logo } from "@/components/logo";
+import { ShareCard, SHARE_CARD_WIDTH } from "@/components/share-card";
 
 function formatRelativeDate(dateStr: string): string {
   const today = new Date().toISOString().slice(0, 10);
@@ -65,6 +68,7 @@ export default function HomeScreen() {
   const [data, setData] = useState<HomeData | null>(null);
   const [period, setPeriod] = useState<Period | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const shareCardRef = useRef<View>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -117,9 +121,32 @@ export default function HomeScreen() {
     setRefreshing(false);
   }
 
-  async function handleShare() {
+  function handleShare() {
     if (!data || !period) return;
     if (process.env.EXPO_OS === "ios") Haptics.selectionAsync();
+    showActionSheet(`Share ${period.label}`, undefined, [
+      { label: "Share as image", onPress: shareImage },
+      { label: "Copy as text", onPress: shareText },
+    ]);
+  }
+
+  async function shareImage() {
+    if (!shareCardRef.current) return shareText();
+    try {
+      const uri = await captureRef(shareCardRef, { format: "png", quality: 1, result: "tmpfile" });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, { mimeType: "image/png", dialogTitle: "Share standings" });
+      } else {
+        await shareText();
+      }
+    } catch {
+      // capture failed or user dismissed — fall back to text so the tap isn't a dead end
+      await shareText();
+    }
+  }
+
+  async function shareText() {
+    if (!data || !period) return;
     const message = buildLeaderboardExport({
       teamName: data.teamName,
       currency: data.currency,
@@ -195,6 +222,26 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-surface">
+      {/* Off-screen capture target for "Share as image". Rendered behind the
+          screen at a fixed width so the PNG is identical on every device. */}
+      {periodHasFines && (
+        <View
+          collapsable={false}
+          pointerEvents="none"
+          style={[styles.offscreen, { width: SHARE_CARD_WIDTH }]}
+        >
+          <ShareCard
+            ref={shareCardRef}
+            data={{
+              teamName,
+              currency,
+              period,
+              leaderboard,
+              outstanding: periodOutstanding,
+            }}
+          />
+        </View>
+      )}
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         contentContainerStyle={styles.scrollContent}
@@ -435,6 +482,7 @@ function PeriodPlayerRow({
 
 const styles = StyleSheet.create({
   scrollContent: { paddingBottom: 100 },
+  offscreen: { position: "absolute", left: -9999, top: 0 },
   card: { borderCurve: "continuous" },
   amount: { fontVariant: ["tabular-nums"] },
   fab: {
