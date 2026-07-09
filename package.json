@@ -15,7 +15,9 @@
     "lint": "oxlint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "knip": "knip --no-config-hints"
+    "knip": "knip --no-config-hints",
+    "typecheck": "bun --filter @team-tally/web typecheck",
+    "check": "oxlint && bun run typecheck"
   },
   "devDependencies": {
     "@types/bun": "latest",
