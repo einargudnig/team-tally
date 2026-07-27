@@ -27,14 +27,14 @@ Bun monorepo with a single workspace glob: `apps/*`. There is no backend — bot
 
 ### Apps
 
-- **`apps/web`** — Astro 5 marketing / landing page. Static site, no client JS framework. Entry point is `src/pages/index.astro`, which composes `src/layouts/Base.astro` with components from `src/components/`. The waitlist CTA is a `mailto:` link — no form backend. Deploys to Vercel as a static build (`astro build` → `dist/`).
+- **`apps/web`** — Astro 5 marketing / landing page. Static site, no client JS framework. Entry point is `src/pages/index.astro`, which composes `src/layouts/Base.astro` with components from `src/components/`. The waitlist CTA posts to `src/pages/api/waitlist.ts`, the one route that opts out of static rendering (`prerender = false`); it adds the address to a Resend segment and sends a welcome email. Deploys to Cloudflare Workers via `@astrojs/cloudflare` (`astro build` → `dist/`).
 
 - **`apps/mobile`** — Expo / React Native app using Expo Router for navigation and NativeWind (Tailwind v3) for styling. State is fully local: **Drizzle ORM over `expo-sqlite`** — no network calls, no auth, no server sync. Schema lives in `db/` and is created on app startup. This is intentional and matches the landing page's "works offline, no accounts" promise.
 
 ### Key Patterns
 
 - **No shared package.** Types are colocated with whichever app uses them. If both apps ever need the same type, prefer duplication over premature extraction.
-- **No backend.** If you need a server-side capability (waitlist storage, analytics, push notifications), discuss the trade-off before adding one back — the whole point of the current architecture is that there isn't one.
+- **Almost no backend.** The waitlist route is the single deliberate exception, and it stores nothing itself — Resend holds the list. Before adding any further server-side capability (analytics, push notifications, sync), discuss the trade-off: the architecture's value is that there is no state to run.
 - **Mobile is the source of truth for domain data.** All fines, teams, and allocations live in the device's SQLite database. Any future sync layer should treat the device as authoritative, not the other way round.
 
 ### Historical context

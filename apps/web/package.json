@@ -12,8 +12,8 @@
     "typecheck": "astro check"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "12.6.13",
     "@astrojs/sitemap": "^3.2.1",
-    "@astrojs/vercel": "8",
     "astro": "^5.1.0",
     "lucide-astro": "^0.556.0",
     "resend": "^6.10.0"

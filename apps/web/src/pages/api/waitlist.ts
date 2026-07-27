@@ -3,14 +3,18 @@ import { Resend } from "resend";
 
 export const prerender = false;
 
-const resend = new Resend(import.meta.env.RESEND_API_KEY);
-const SEGMENT_ID = import.meta.env.RESEND_SEGMENT_ID;
-const FROM_EMAIL =
-  import.meta.env.RESEND_FROM_EMAIL ?? "Team Tally <onboarding@resend.dev>";
-
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
+  // Workers supplies these per-request as bindings, so they can't be read at
+  // module scope the way import.meta.env allowed on Vercel — at module
+  // evaluation time the binding isn't populated yet.
+  const env = locals.runtime.env;
+  const resend = new Resend(env.RESEND_API_KEY);
+  const SEGMENT_ID = env.RESEND_SEGMENT_ID;
+  const FROM_EMAIL =
+    env.RESEND_FROM_EMAIL ?? "Team Tally <onboarding@resend.dev>";
+
   try {
     const body = await request.json();
     const email =
@@ -49,7 +53,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // Welcome email. Awaited so Vercel doesn't kill the function mid-send,
+    // Welcome email. Awaited so the runtime doesn't kill the request mid-send,
     // but a failure here shouldn't fail the whole request — the user is
     // already on the list, which is what they asked for.
     const { error: emailError } = await resend.emails.send({

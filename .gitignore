@@ -45,3 +45,5 @@ skills/
 
 # App Store screenshots — regenerated locally, ASC owns the canonical copy
 apps/mobile/screenshots/
+.vercel
+.wrangler/
