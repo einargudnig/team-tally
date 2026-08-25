@@ -72,6 +72,7 @@ names (Hafnarfjörður FC), `kr` currency, real-looking fines ("Late to practice
 
 The app isn't approved yet, so the calendar below is a **relative timeline**
 (Day -7 … Day +10). For the Google Calendar reminders I anchored **Day 0 = Tuesday
-23 June 2026** as a *placeholder*. When you get your real App Store approval date,
-shift everything by the difference (the calendar events are all labelled
-`[TENTATIVE]` so they're easy to find and move).
+7 July 2026** as a *placeholder* (postponed two weeks from the original 23 June
+placeholder). When you get your real App Store approval date, shift everything by the
+difference (the calendar events are all labelled `[TENTATIVE]` so they're easy to find
+and move).
