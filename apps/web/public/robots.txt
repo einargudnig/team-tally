@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://team-tally.app/sitemap-index.xml
+Sitemap: https://team-tally.einargudni.com/sitemap-index.xml

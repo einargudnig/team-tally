@@ -6,7 +6,7 @@ import cloudflare from "@astrojs/cloudflare";
 export default defineConfig({
   // Static everywhere except src/pages/api/waitlist.ts, which opts out with
   // prerender = false — that single route is why an adapter is still needed.
-  site: "https://team-tally.app",
+  site: "https://team-tally.einargudni.com",
   output: "static",
   adapter: cloudflare(),
   integrations: [sitemap()],
