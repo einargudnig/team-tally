@@ -1,12 +1,14 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
-import vercel from "@astrojs/vercel";
+import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://team-tally.app",
+  // Static everywhere except src/pages/api/waitlist.ts, which opts out with
+  // prerender = false — that single route is why an adapter is still needed.
+  site: "https://team-tally.einargudni.com",
   output: "static",
-  adapter: vercel(),
+  adapter: cloudflare(),
   integrations: [sitemap()],
   build: {
     inlineStylesheets: "auto",

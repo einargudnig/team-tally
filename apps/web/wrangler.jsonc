@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "team-tally-web",
+  "compatibility_date": "2026-07-26",
+
+  // resend ships CommonJS and reaches for Node built-ins.
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Unlike the newer adapter line, @astrojs/cloudflare 12 emits Pages-style
+  // output and injects nothing — main and assets have to be declared here.
+  "main": "./dist/_worker.js/index.js",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+
+  "routes": [
+    { "pattern": "team-tally.einargudni.com", "custom_domain": true }
+  ],
+
+  "observability": {
+    "enabled": true
+  }
+}
